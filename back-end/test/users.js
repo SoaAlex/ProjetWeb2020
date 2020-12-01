@@ -1,6 +1,6 @@
 
 const supertest = require('supertest')
-const app = require('../lib/app')
+const app = require('../routes/app')
 const db = require('../lib/db')
 
 describe('users', () => {
@@ -34,8 +34,8 @@ describe('users', () => {
   it('add one element', async () => {
     // Create a user
     const {body: user} = await supertest(app)
-    .post('/users')
-    .send({username: 'user_1'})
+    .post('/users/register')
+    .send({username: 'user_1', password: '1234'})
     .expect(201)
     // Check its return value
     // Check it was correctly inserted

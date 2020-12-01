@@ -5,6 +5,7 @@ const microtime = require('microtime')
 const level = require('level')
 const db = level(__dirname + '/../db')
 const bcrypt = require('bcrypt')
+const jwt = require('../utils/jwt.utils')
 
 module.exports = {
   channels: {
@@ -81,7 +82,7 @@ module.exports = {
     },
   },
   users: {
-    create: async (user) => {
+    register: async (user) => {
       //Verify user doesn't already exists
       let userNotFound = false;
       try{
@@ -100,7 +101,30 @@ module.exports = {
         return user
       }
       else{
-        return {status: 409}
+        return {status: 409} //User already exists
+      }
+    },
+    login: async (user) => {
+      let userFound = null
+      try{
+        userFound = await db.get(`users:${user.username}`)
+      }catch(err){
+        return {status: 404} //Invalid username
+      }
+      if(userFound){
+        //Check if password matches hash
+        bcrypt.compare(user.password, userFound.password, (err, res) => {
+          if (err) {
+            return {status: 401} //Invalid password
+          }
+          if (res){
+            return {
+              username: userFound.username, 
+              token: jwt.generateUserToken(userFound),
+              //refreshToken: jwt.generateUserRefreshToken(userFound)
+            }
+          }
+        })
       }
     },
     get: async (id) => {

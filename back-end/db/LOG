@@ -1,6 +1,6 @@
-2020/12/01-17:18:56.274 40cc Recovering log #158
-2020/12/01-17:18:56.275 40cc Level-0 table #160: started
-2020/12/01-17:18:56.280 40cc Level-0 table #160: 290 bytes OK
-2020/12/01-17:18:56.284 40cc Delete type=0 #158
-2020/12/01-17:18:56.285 40cc Delete type=3 #157
-2020/12/01-17:18:56.285 250 Moved #135 to level-1 227 bytes OK: files[ 3 9 0 0 0 0 0 ]
+2020/12/01-21:50:12.365 814 Recovering log #161
+2020/12/01-21:50:12.365 814 Level-0 table #163: started
+2020/12/01-21:50:12.367 814 Level-0 table #163: 291 bytes OK
+2020/12/01-21:50:12.372 814 Delete type=0 #161
+2020/12/01-21:50:12.372 814 Delete type=3 #159
+2020/12/01-21:50:12.373 3948 Moved #107 to level-1 227 bytes OK: files[ 3 10 0 0 0 0 0 ]

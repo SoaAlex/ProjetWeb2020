@@ -3,8 +3,10 @@ const db = require('../lib/db')
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const cookieParser = require('cookie-parser')
 
 app.use(require('body-parser').json())
+
 app.use(cors())
 
 app.get('/', (req, res) => {
@@ -54,13 +56,27 @@ app.get('/users', async (req, res) => {
   res.json(users)
 })
 
-app.post('/users', async (req, res) => {
-  try{
-    user = await db.users.create(req.body)
-    res.status(201).json(user)
-  }catch(err){
-    res.status(409).json({'error': 'User already exists or an error occured during put'}) //Duplicate user
-  }
+app.post('/users/register', async (req, res) => {
+    status = await db.users.register(req.body)
+    if(status.status == 409){
+      res.status(409).json({'error': 'Duplicate user'}) //Duplicate user
+    }
+    else{
+      res.sendStatus(201)
+    }
+})
+
+app.post('/users/login', async (req, res) => {
+    user = await db.users.login(req.body)
+    if(user.status == 404){
+      res.status(404).json({'error': 'User not found'}) //User not found
+    }else if(status.status == 401){
+      res.status(401).json({'error': 'Invalid password'}) //Invalid password
+    }
+    else{
+      document.cookie = `authorization=${user.token}`
+      res.status(200).json()
+    }
 })
 
 app.get('/users/:id', async (req, res) => {
