@@ -4,6 +4,7 @@ const {clone, merge} = require('mixme')
 const microtime = require('microtime')
 const level = require('level')
 const db = level(__dirname + '/../db')
+const bcrypt = require('bcrypt')
 
 module.exports = {
   channels: {
@@ -81,10 +82,26 @@ module.exports = {
   },
   users: {
     create: async (user) => {
-      if(!user.username) throw Error('Invalid user')
-      const id = uuid()
-      await db.put(`users:${id}`, JSON.stringify(user))
-      return merge(user, {id: id})
+      //Verify user doesn't already exists
+      let userNotFound = false;
+      try{
+        await db.get(`users:${user.username}`);
+      }catch(err){//If not found
+        userNotFound = true
+      }
+
+      if(userNotFound){
+        //Hash passoword
+        const hash = await bcrypt.hash(user.password, 5)
+        user.password = hash
+
+        //Insert in DB
+        await db.put(`users:${user.username}`, JSON.stringify(user))
+        return user
+      }
+      else{
+        return {status: 409}
+      }
     },
     get: async (id) => {
       if(!id) throw Error('Invalid id')

@@ -1,5 +1,5 @@
 
-const db = require('./db')
+const db = require('../lib/db')
 const express = require('express')
 const cors = require('cors')
 const app = express()
@@ -55,13 +55,21 @@ app.get('/users', async (req, res) => {
 })
 
 app.post('/users', async (req, res) => {
-  const user = await db.users.create(req.body)
-  res.status(201).json(user)
+  try{
+    user = await db.users.create(req.body)
+    res.status(201).json(user)
+  }catch(err){
+    res.status(409).json({'error': 'User already exists or an error occured during put'}) //Duplicate user
+  }
 })
 
 app.get('/users/:id', async (req, res) => {
-  const user = await db.users.get(req.params.id)
-  res.json(user)
+  try{
+    const user = await db.users.get(req.params.id)
+    res.json(user)
+  }catch(err){
+    return res.sendStatus(404)
+  }
 })
 
 app.put('/users/:id', async (req, res) => {
