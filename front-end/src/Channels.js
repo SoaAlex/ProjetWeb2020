@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext} from 'react';
+import {useEffect, useContext} from 'react';
 import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
@@ -30,6 +30,7 @@ export default ({
     }
     fetch()
   }, [contextChannels.setChannelsContext, contextChannels])
+  
   return (
       <ul className={styles.root}>
         { contextChannels.channels.map( (channel, i) => (

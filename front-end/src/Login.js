@@ -1,5 +1,4 @@
-import {} from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -51,6 +50,11 @@ const useStyles = (theme) => ({
 export default ({
   onUser
 }) => {
+  let wrongPassword = false;
+  let wrongUsername = false;
+  const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
+
   const [values, setValues] = React.useState({
     password: '',
     showPassword: false,
@@ -58,6 +62,7 @@ export default ({
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
+    setPassword(event.target.value);
   };
 
   const handleClickShowPassword = () => {
@@ -68,26 +73,25 @@ export default ({
     event.preventDefault();
   };
 
-  /*const usernameHandler = (e) =>{
-     
-  }
-
   const handleLogIn = () => {
-    const {data: response} = await axios.get('http://localhost:3001/users/login',{
-      params: {
-
+    axios.post('http://localhost:3001/users/login',{
+        username: username,
+        password: password
+    }).then(function (response){
+      console.log(response)
+      wrongUsername = false;
+      wrongPassword = false;
+    }).catch(function (error){
+      if(error.response.status === 404){
+        wrongUsername = true;
       }
+      else if(error.response.status === 401){
+        wrongPassword = true;
+      }
+    }).then(function (){
+      onUser(username)
     })
   }
-
-  const [channels, setChannels] = useState([])
-  useEffect( () => {
-    const fetch = async () => {
-      const {data: channels} = await axios.get('http://localhost:3001/channels')
-      setChannels(channels)
-    }
-    fetch()
-  }*/
 
   const styles = useStyles(useTheme());
 
@@ -105,12 +109,14 @@ export default ({
 
       <Grid>
         <TextField
+          error= {true}
           variant="outlined"
-          id="Username"
+          id="username"
           label="Username"
-          name="Username"
+          name="username"
           autoFocus
           fullWidth
+          onChange={(e) => setUsername(e.target.value)}
         />
       </Grid>
 
@@ -147,10 +153,11 @@ export default ({
           variant="contained"
           color="primary"
           fullWidth
-          onClick={ (e) => {
+          onClick={handleLogIn}
+          /*onClick={ (e) => {
             e.stopPropagation()
             onUser({username: 'david'})
-          }}
+          }}*/
         >
           Log in
         </Button>
