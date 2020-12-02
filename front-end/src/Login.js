@@ -15,8 +15,9 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import axios from 'axios';
 
-/** HIGHLY INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
+/** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
 const useStyles = (theme) => ({
   root: {
@@ -66,6 +67,27 @@ export default ({
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  /*const usernameHandler = (e) =>{
+     
+  }
+
+  const handleLogIn = () => {
+    const {data: response} = await axios.get('http://localhost:3001/users/login',{
+      params: {
+
+      }
+    })
+  }
+
+  const [channels, setChannels] = useState([])
+  useEffect( () => {
+    const fetch = async () => {
+      const {data: channels} = await axios.get('http://localhost:3001/channels')
+      setChannels(channels)
+    }
+    fetch()
+  }*/
 
   const styles = useStyles(useTheme());
 

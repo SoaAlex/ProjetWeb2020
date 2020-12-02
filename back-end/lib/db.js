@@ -108,23 +108,24 @@ module.exports = {
       let userFound = null
       try{
         userFound = await db.get(`users:${user.username}`)
+        userFound = JSON.parse(userFound)
       }catch(err){
         return {status: 404} //Invalid username
       }
       if(userFound){
         //Check if password matches hash
-        bcrypt.compare(user.password, userFound.password, (err, res) => {
-          if (err) {
-            return {status: 401} //Invalid password
+        const match = await bcrypt.compare(user.password, userFound.password);
+        if(match){
+          return {
+            username: userFound.username, 
+            status: 200,
+            token: jwt.generateUserToken(userFound),
+            //refreshToken: jwt.generateUserRefreshToken(userFound)
           }
-          if (res){
-            return {
-              username: userFound.username, 
-              token: jwt.generateUserToken(userFound),
-              //refreshToken: jwt.generateUserRefreshToken(userFound)
-            }
-          }
-        })
+        }
+        else{
+          return {status: 401} //Invalid password
+        }
       }
     },
     get: async (id) => {

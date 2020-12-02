@@ -7,7 +7,7 @@ import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
 import Login from './Login'
-import { ChannelContext } from './Contexts/ChannelContext'
+import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
@@ -30,7 +30,7 @@ export default () => {
   //VARIABLES & HOOKS
   const styles = useStyles();
   const [user, setUser] = useState(null)
-  const [channel, setChannel] = useState([{id: 0, name: 'channel 0'}]);
+  const [channels, setChannels] = useState([{id: 0, name: 'channel 0'}]);
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const darkModeToggleListener = () => {
@@ -38,6 +38,15 @@ export default () => {
   }
   const drawerToggleListener = () => {
     setDrawerMobileVisible(!drawerMobileVisible)
+  }
+
+  const contextChannels = {
+    channels: channels,
+    setChannelsContext: setChannels
+  }
+  const contextUser = {
+    user: user,
+    setUserContext: setUser
   }
 
   //PALETTE
@@ -60,8 +69,8 @@ export default () => {
   //RENDER
   return (
     <ThemeProvider theme={theme}>
-    <UserContext.Provider value={{user: user, setUserContext: setUser}}>
-    <ChannelContext.Provider value={{channel, setChannelContext: setChannel}}>
+    <UserContext.Provider value={contextUser}>
+    <ChannelsContext.Provider value={contextChannels}>
     <CssBaseline />
       <div className={styles.root}>
         <Header 
@@ -73,7 +82,7 @@ export default () => {
         }
         <Footer />
       </div>
-    </ChannelContext.Provider>
+    </ChannelsContext.Provider>
     </UserContext.Provider>
     </ThemeProvider>
   );
