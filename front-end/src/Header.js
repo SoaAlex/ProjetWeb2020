@@ -12,7 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-
+import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import {ReactComponent as ECEIcon} from './icons/LogoECE.svg';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +36,13 @@ const useStyles = makeStyles((theme) => ({
       display: 'none !important',
     },
     marginRight: theme.spacing(2),
+  },
+  darkModeSwitch:{
+    marginRight: '-5px',
+    //marginLeft: '-5px'
+  },
+  accountIcon:{
+    marginLeft: '15px',
   }
 }));
 
@@ -75,8 +83,11 @@ export default ({
                 onClick = {handleDarkModeToggle}
               />
             }
-            label="Dark Mode (BETA)"
+            className={styles.darkModeSwitch}
+            //label="Dark Mode (BETA)"
           />
+          <NightsStayRoundedIcon/>
+          <AccountCircleRoundedIcon className={styles.accountIcon}/>
         </Toolbar>
       </AppBar>
     </header>

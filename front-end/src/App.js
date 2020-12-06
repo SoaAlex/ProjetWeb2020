@@ -8,11 +8,18 @@ import Footer from './Footer'
 import Header from './Header'
 import Main from './Main'
 import Login from './Login'
+import Register from './Register'
 import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({  root: {
     boxSizing: 'border-box',
@@ -47,6 +54,8 @@ export default () => {
   const [channels, setChannels] = useState([{id: 0, name: 'channel 0'}]);
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [hasAnAccount, setHasAnAccount] = useState(true) 
+
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
   }
@@ -86,16 +95,28 @@ export default () => {
     <UserContext.Provider value={contextUser}>
     <ChannelsContext.Provider value={contextChannels}>
     <CssBaseline />
-      <div className={styles.root}>
-        <Header 
-          drawerToggleListener={drawerToggleListener}
-          darkModeToggleListener = {darkModeToggleListener}
-        />
-        {
-          user ? <Main drawerMobileVisible={drawerMobileVisible} /> : <Login onUser={setUser} />
-        }
-        <Footer />
-      </div>
+      <Router>
+        <div className={styles.root}>
+          <Header 
+            drawerToggleListener={drawerToggleListener}
+            darkModeToggleListener = {darkModeToggleListener}
+          />
+
+          <Switch>
+            <Route path="/login">
+              <Login onUser={setUser}/>
+            </Route>
+            <Route path="/register">
+              <Register onUser={setUser}/>
+            </Route>
+            <Route path="/welcome">
+              <Main drawerMobileVisible={drawerMobileVisible} />
+            </Route>
+          </Switch>
+
+          <Footer />
+        </div>
+      </Router>
     </ChannelsContext.Provider>
     </UserContext.Provider>
     </ThemeProvider>
