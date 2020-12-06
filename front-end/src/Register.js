@@ -15,7 +15,6 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
-import { FormHelperText } from '@material-ui/core';
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
@@ -40,24 +39,13 @@ const useStyles = (theme) => ({
   center:{
     width: 'auto',
   },
-  h2:{
-    color: theme.palette.primary,
-  },
-  main:{
-    background: theme.palette.background,
-  },
-  register:{
-    marginTop: '10px',
-    textAlign: 'center',
-    marginBottom: '-15px',
-  }
 });
 
 export default ({
   onUser
 }) => {
-  const [wrongPass, setWrongPass] = useState(false);
-  const [wrongUser, setWrongUser] = useState(false);
+  const [userAlreadyExist, setUserAlreadyExist] = useState(false);
+  const [email, setEmail] = useState(null)
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
 
@@ -79,33 +67,22 @@ export default ({
     event.preventDefault();
   };
 
-  const handleLogIn = () => {
-    axios.post('http://localhost:3001/users/login',{
+  const handleRegister = () => {
+    axios.post('http://localhost:3001/users/register',{
         username: username,
-        password: password
+        email: email,
+        password: password,
     }, {withCredentials: true}).then(function (response){
       console.log(response)
-      setWrongUser(false);
-      setWrongPass(false);
-      console.log("Redirecting to welcome...")
+      console.log("Redirecting to login...")
       onUser(username)
-      window.location.href = '/welcome';
+      window.location.href = '/login';
     }).catch(function (error){
-      if(error.response.status === 404){
-        console.log("Wrong username...")
-        setWrongPass(false);
-        setWrongUser(true);
-      }
-      else if(error.response.status === 401){
-        console.log("Wrong password...")
-        setWrongPass(true);
-        setWrongUser(false);
+      if(error.response.status === 409){
+        console.log("User already exists...")
+        setUserAlreadyExist(true);
       }
     })
-  }
-
-  const handleRegister = () => {
-    window.location.href = '/register';
   }
 
   const styles = useStyles(useTheme());
@@ -118,13 +95,13 @@ export default ({
 
       <Grid style={styles.center}>
         <Typography variant='h2' color='primary'>
-          WhatsECE
+          Create an account
         </Typography>
       </Grid>
 
       <Grid>
         <TextField
-          error= {wrongUser}
+          error= {userAlreadyExist}
           variant="outlined"
           id="username"
           label="Username"
@@ -132,7 +109,18 @@ export default ({
           autoFocus
           fullWidth
           onChange={(e) => setUsername(e.target.value)}
-          helperText={wrongUser ? "Incorrect Username" : ""}
+          helperText={userAlreadyExist ? "User already exists. Please try another username" : ""}
+        />
+      </Grid>
+
+      <Grid>
+        <TextField
+          variant="outlined"
+          id="email"
+          label="E-mail"
+          name="E-mail"
+          fullWidth
+          onChange={(e) => setEmail(e.target.value)}
         />
       </Grid>
 
@@ -140,7 +128,6 @@ export default ({
         <FormControl css = {styles.password} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password" >Password</InputLabel>
           <OutlinedInput
-            error={wrongPass}
             id="outlined-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
@@ -160,7 +147,6 @@ export default ({
             }
             labelWidth={70}
           />
-          {wrongPass ? <FormHelperText id="component-error-text" error>Incorrect password</FormHelperText> : ""}
         </FormControl>
       </Grid>
         
@@ -171,27 +157,9 @@ export default ({
           variant="contained"
           color="primary"
           fullWidth
-          onClick={handleLogIn}
-        >
-          Log in
-        </Button>
-      </Grid>
-
-      <Grid>
-        <Typography variant='h6' color='primary' css={styles.register}>
-          Do not have an account yet ?
-        </Typography>
-      </Grid>
-
-      <Grid>
-        <Button
-          margin = 'normal'
-          variant="contained"
-          color="primary"
-          fullWidth
           onClick={handleRegister}
         >
-          Sign in
+          Register
         </Button>
       </Grid>
 

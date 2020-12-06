@@ -40,12 +40,7 @@ const useStyles = (theme) => ({
   center:{
     width: 'auto',
   },
-  h2:{
-    color: theme.palette.primary,
-  },
-  main:{
-    background: theme.palette.background,
-  },
+
   register:{
     marginTop: '10px',
     textAlign: 'center',

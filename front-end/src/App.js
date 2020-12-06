@@ -18,7 +18,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({  root: {
@@ -54,7 +53,6 @@ export default () => {
   const [channels, setChannels] = useState([{id: 0, name: 'channel 0'}]);
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
-  const [hasAnAccount, setHasAnAccount] = useState(true) 
 
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
