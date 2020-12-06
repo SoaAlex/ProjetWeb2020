@@ -1,7 +1,7 @@
 import './App.css';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-
+import React from 'react'
 // HIGHLY INSPIRED FROM MUI DOCS: https://material-ui.com/components/app-bar/
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +14,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { eraseCookie } from './utils/cookies';
 import {ReactComponent as ECEIcon} from './icons/LogoECE.svg';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,12 +45,14 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '-5px',
     //marginLeft: '-5px'
   },
-  accountIcon:{
-    marginLeft: '15px',
+  accountButton:{
+    backgroundColor: theme.palette.primary.dark
+  },
+  logout:{
+    color: theme.palette.error.main
   }
 }));
 
-//<img src={require("./icons/LogoECE.png")} alt='WhatsECE Logo' className={styles.img} />
 export default ({
   drawerToggleListener,
   darkModeToggleListener
@@ -58,6 +64,28 @@ export default ({
   const handleDarkModeToggle = (e) => {
     darkModeToggleListener()
   }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogOut = () => {
+    handleClose()
+    eraseCookie("authorization")
+    window.location.href = '/';
+  }
+
+  const handleManageAccount = () => {
+    handleClose()
+    window.location.href = '/account';
+  }
+
   return (
     <header className={styles.root}>
       <AppBar position="static" color="primary">
@@ -75,19 +103,39 @@ export default ({
           <Typography variant="h5" className={styles.title}>
             WhatsECE
           </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                name="darkModeSwitch"
-                color="secondary"
-                onClick = {handleDarkModeToggle}
-              />
-            }
-            className={styles.darkModeSwitch}
-            //label="Dark Mode (BETA)"
-          />
-          <NightsStayRoundedIcon/>
-          <AccountCircleRoundedIcon className={styles.accountIcon}/>
+          <IconButton aria-label="darkMode">
+            <FormControlLabel
+              control={
+                <Switch
+                  name="darkModeSwitch"
+                  color="secondary"
+                  onClick = {handleDarkModeToggle}
+                />
+              }
+              className={styles.darkModeSwitch}
+              //label="Dark Mode (BETA)"
+            />
+            <NightsStayRoundedIcon/>
+          </IconButton>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={styles.accountButton}
+            onClick={handleClick}
+            endIcon={<AccountCircleRoundedIcon></AccountCircleRoundedIcon>}
+          >
+            My Account
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleManageAccount}>Manage account</MenuItem>
+            <MenuItem onClick={handleLogOut} className={styles.logout}>Logout</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
     </header>

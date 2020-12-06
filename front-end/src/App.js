@@ -14,6 +14,7 @@ import { UserContext } from './Contexts/UserContext';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { getCookie } from './utils/cookies';
 import {
   BrowserRouter as Router,
   Switch,
@@ -34,11 +35,6 @@ const useStyles = makeStyles((theme) => ({  root: {
   },
 }));
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
 
 //Add authorization to every headers
 axios.interceptors.request.use(req => {
