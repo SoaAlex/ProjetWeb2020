@@ -15,6 +15,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
+import { FormHelperText } from '@material-ui/core';
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
@@ -50,8 +51,8 @@ const useStyles = (theme) => ({
 export default ({
   onUser
 }) => {
-  let wrongPassword = false;
-  let wrongUsername = false;
+  const [wrongPass, setWrongPass] = useState(false);
+  const [wrongUser, setWrongUser] = useState(false);
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
 
@@ -77,19 +78,23 @@ export default ({
     axios.post('http://localhost:3001/users/login',{
         username: username,
         password: password
-    }).then(function (response){
+    }, {withCredentials: true}).then(function (response){
       console.log(response)
-      wrongUsername = false;
-      wrongPassword = false;
+      setWrongUser(false);
+      setWrongPass(false);
+      console.log("Redirecting to welcome...")
+      onUser(username)
     }).catch(function (error){
       if(error.response.status === 404){
-        wrongUsername = true;
+        console.log("Wrong username...")
+        setWrongPass(false);
+        setWrongUser(true);
       }
       else if(error.response.status === 401){
-        wrongPassword = true;
+        console.log("Wrong password...")
+        setWrongPass(true);
+        setWrongUser(false);
       }
-    }).then(function (){
-      onUser(username)
     })
   }
 
@@ -109,7 +114,7 @@ export default ({
 
       <Grid>
         <TextField
-          error= {true}
+          error= {wrongUser}
           variant="outlined"
           id="username"
           label="Username"
@@ -117,6 +122,7 @@ export default ({
           autoFocus
           fullWidth
           onChange={(e) => setUsername(e.target.value)}
+          helperText={wrongUser ? "Incorrect Username" : ""}
         />
       </Grid>
 
@@ -124,6 +130,7 @@ export default ({
         <FormControl css = {styles.password} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password" >Password</InputLabel>
           <OutlinedInput
+            error={wrongPass}
             id="outlined-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
@@ -143,6 +150,7 @@ export default ({
             }
             labelWidth={70}
           />
+          {wrongPass ? <FormHelperText id="component-error-text" error>Incorrect password</FormHelperText> : ""}
         </FormControl>
       </Grid>
         

@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import './App.css';
+import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Local
@@ -25,6 +26,19 @@ const useStyles = makeStyles((theme) => ({  root: {
     width: '100%',
   },
 }));
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+//Add authorization to every headers
+axios.interceptors.request.use(req => {
+  req.headers.authorization = getCookie('authorization')
+  return req;
+});
+
 
 export default () => {
   //VARIABLES & HOOKS

@@ -8,7 +8,9 @@ const cookieParser = require('cookie-parser')
 app.use(require('body-parser').json())
 app.use(cookieParser())
 
-app.use(cors())
+//Cookies middlewear
+app.use(cors({ origin: true, credentials: true }));
+
 
 app.get('/', (req, res) => {
   res.send([
@@ -17,7 +19,6 @@ app.get('/', (req, res) => {
 })
 
 // Channels
-
 app.get('/channels', async (req, res) => {
   const channels = await db.channels.list()
   res.json(channels)
@@ -75,10 +76,9 @@ app.post('/users/login', async (req, res) => {
       res.status(401).json({'error': 'Invalid password'}) //Invalid password
     }
     else{
-      res.writeHead(200, {
-        "Set-Cookie": `authorization=${user.token}`,
-        "username": `username=${user.username}`
-      }).send()
+      //Send jwt token to browser and store it in cookies
+      res.cookie('authorization', user.token, { httpOnly: false });
+      res.send()
     }
 })
 
