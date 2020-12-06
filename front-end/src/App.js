@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import './App.css';
 import axios from 'axios';
 /** @jsx jsx */
@@ -18,6 +18,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({  root: {
@@ -53,6 +54,23 @@ export default () => {
   const [channels, setChannels] = useState([{id: 0, name: 'channel 0'}]);
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false);
+
+
+  useEffect( () => {
+    const checkLoggedIn = async () => {
+      if(typeof getCookie('authorization') === "undefined"){
+        setLoggedIn(false);
+        console.log("Not logged in")
+      }else{
+        setLoggedIn(true);
+        console.log("Logged in. Redirecting...")
+      }
+    }
+    checkLoggedIn()
+  }, [loggedIn])
+
+  
 
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
@@ -102,13 +120,16 @@ export default () => {
 
           <Switch>
             <Route path="/login">
-              <Login onUser={setUser}/>
+              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUser}/>}
             </Route>
             <Route path="/register">
-              <Register onUser={setUser}/>
+              {loggedIn ? <Redirect to="/welcome"/> : <Register/>}
             </Route>
             <Route path="/welcome">
               <Main drawerMobileVisible={drawerMobileVisible} />
+            </Route>
+            <Route path="/"> 
+              <Redirect to="/login" />
             </Route>
           </Switch>
 
