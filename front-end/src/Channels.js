@@ -32,7 +32,7 @@ export default ({
     // eslint-disable-next-line
   }, []) 
   //https://stackoverflow.com/questions/57859484/useeffect-runs-infinite-loop-despite-no-change-in-dependencies
-  //Le pointeur de l'array change mais pas son contenu. Cependant, useEffect continue de croire qu'il a changer.
+  //Le pointeur de l'array change mais pas son contenu. Cependant, useEffect continue de croire qu'il a changé.
   
   return (
       <ul className={styles.root}>

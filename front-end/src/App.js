@@ -11,6 +11,7 @@ import Login from './Login'
 import Register from './Register'
 import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
+import { LoggedInContext } from './Contexts/LoggedInContext';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -46,12 +47,11 @@ axios.interceptors.request.use(req => {
 export default () => {
   //VARIABLES & HOOKS
   const styles = useStyles();
-  const [user, setUser] = useState(null)
+  const [username, setUsername] = useState("My Account")
   const [channels, setChannels] = useState([{id: 0, name: 'channel 0'}]);
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false);
-
 
   useEffect( () => {
     const checkLoggedIn = async () => {
@@ -66,8 +66,6 @@ export default () => {
     checkLoggedIn()
   }, [loggedIn])
 
-  
-
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
   }
@@ -75,13 +73,18 @@ export default () => {
     setDrawerMobileVisible(!drawerMobileVisible)
   }
 
+  const contextLoggedIn = {
+    loggedIn: loggedIn,
+    setLoggedInContext: setLoggedIn
+  }
+
   const contextChannels = {
     channels: channels,
     setChannelsContext: setChannels
   }
   const contextUser = {
-    user: user,
-    setUserContext: setUser
+    username: username,
+    setUserContext: setUsername
   }
 
   //PALETTE
@@ -105,6 +108,7 @@ export default () => {
   return (
     <ThemeProvider theme={theme}>
     <UserContext.Provider value={contextUser}>
+    <LoggedInContext.Provider value={contextLoggedIn}>
     <ChannelsContext.Provider value={contextChannels}>
     <CssBaseline />
       <Router>
@@ -116,13 +120,13 @@ export default () => {
 
           <Switch>
             <Route path="/login">
-              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUser}/>}
+              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUsername}/>}
             </Route>
             <Route path="/register">
               {loggedIn ? <Redirect to="/welcome"/> : <Register/>}
             </Route>
             <Route path="/welcome">
-              <Main drawerMobileVisible={drawerMobileVisible} />
+              {loggedIn ? <Main drawerMobileVisible={drawerMobileVisible} /> : <Redirect to="/login"/>}
             </Route>
             <Route path="/"> 
               <Redirect to="/login" />
@@ -133,6 +137,7 @@ export default () => {
         </div>
       </Router>
     </ChannelsContext.Provider>
+    </LoggedInContext.Provider>
     </UserContext.Provider>
     </ThemeProvider>
   );

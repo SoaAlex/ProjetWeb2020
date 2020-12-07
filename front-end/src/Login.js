@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -16,6 +16,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
 import { FormHelperText } from '@material-ui/core';
+import { UserContext } from './Contexts/UserContext';
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
@@ -51,10 +52,13 @@ const useStyles = (theme) => ({
 export default ({
   onUser
 }) => {
+  const contextUser = useContext(UserContext)
+
   const [wrongPass, setWrongPass] = useState(false);
   const [wrongUser, setWrongUser] = useState(false);
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
+
 
   const [values, setValues] = React.useState({
     password: '',
@@ -79,10 +83,11 @@ export default ({
         username: username,
         password: password
     }, {withCredentials: true}).then(function (response){
-      console.log(response)
       setWrongUser(false);
       setWrongPass(false);
       console.log("Redirecting to welcome...")
+      contextUser.setUserContext(username) //Not working for some reason
+      //console.log(contextUser.username)
       onUser(username)
       window.location.href = '/welcome';
     }).catch(function (error){

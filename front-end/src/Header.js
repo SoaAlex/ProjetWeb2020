@@ -2,6 +2,7 @@ import './App.css';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React from 'react'
+import {useContext} from 'react'
 // HIGHLY INSPIRED FROM MUI DOCS: https://material-ui.com/components/app-bar/
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,6 +19,8 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { eraseCookie } from './utils/cookies';
+import { LoggedInContext } from './Contexts/LoggedInContext';
+import { UserContext } from './Contexts/UserContext';
 import {ReactComponent as ECEIcon} from './icons/LogoECE.svg';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    color: '#ffffff'
   },
   img:{
     maxWidth: '40px',
@@ -57,6 +61,9 @@ export default ({
   drawerToggleListener,
   darkModeToggleListener
 }) => {
+  const contextUser = useContext(UserContext)
+  const contextLoggedIn = useContext(LoggedInContext)
+
   const styles = useStyles();
   const handleDrawerToggle = (e) => {
     drawerToggleListener()
@@ -68,6 +75,7 @@ export default ({
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
+    console.log(contextUser.username)
     setAnchorEl(event.currentTarget);
   };
 
@@ -86,6 +94,10 @@ export default ({
     window.location.href = '/account';
   }
 
+  const handleRedirectHome = () => {
+    window.location.href = '/welcome';
+  }
+
   return (
     <header className={styles.root}>
       <AppBar position="static" color="primary">
@@ -99,10 +111,14 @@ export default ({
           >
             <MenuIcon />
           </IconButton>
-          <ECEIcon className ={styles.img}/>
-          <Typography variant="h5" className={styles.title}>
-            WhatsECE
-          </Typography>
+          <IconButton onClick={handleRedirectHome}>
+            <ECEIcon className ={styles.img} />
+            <Typography variant="h5" className={styles.title}>
+              WhatsECE
+            </Typography>
+          </IconButton>
+          <Typography variant="h5" className={styles.title}></Typography> 
+
           <IconButton aria-label="darkMode">
             <FormControlLabel
               control={
@@ -117,6 +133,7 @@ export default ({
             />
             <NightsStayRoundedIcon/>
           </IconButton>
+          { contextLoggedIn.loggedIn ?
           <Button
             variant="contained"
             color="secondary"
@@ -124,8 +141,10 @@ export default ({
             onClick={handleClick}
             endIcon={<AccountCircleRoundedIcon></AccountCircleRoundedIcon>}
           >
-            My Account
-          </Button>
+            { contextUser.username }
+          </Button> : ""
+          }
+          { contextLoggedIn.loggedIn ?
           <Menu
             id="simple-menu"
             anchorEl={anchorEl}
@@ -135,7 +154,8 @@ export default ({
           >
             <MenuItem onClick={handleManageAccount}>Manage account</MenuItem>
             <MenuItem onClick={handleLogOut} className={styles.logout}>Logout</MenuItem>
-          </Menu>
+          </Menu> : ""
+          }
         </Toolbar>
       </AppBar>
     </header>
