@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default ({
   drawerToggleListener,
-  darkModeToggleListener
+  darkModeToggleListener,
 }) => {
   const contextUser = useContext(UserContext)
   const contextLoggedIn = useContext(LoggedInContext)

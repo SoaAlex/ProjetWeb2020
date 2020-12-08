@@ -17,6 +17,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { getCookie } from './utils/cookies';
+import jwt from './utils/jwt.utils'
 import {
   BrowserRouter as Router,
   Switch,
@@ -61,6 +62,7 @@ export default () => {
         console.log("Not logged in")
       }else{
         setLoggedIn(true);
+        setUsername(jwt.verifyToken(getCookie('authorization')).username)
         console.log("Logged in. Redirecting...")
       }
     }
@@ -122,7 +124,7 @@ export default () => {
 
           <Switch>
             <Route path="/login">
-              {loggedIn ? <Redirect to="/welcome"/> : <Login/>}
+              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUsername}/>}
             </Route>
             <Route path="/register">
               {loggedIn ? <Redirect to="/welcome"/> : <Register/>}
@@ -131,7 +133,8 @@ export default () => {
               {loggedIn ? <Main drawerMobileVisible={drawerMobileVisible} /> : <Redirect to="/login"/>}
             </Route>
             <Route path="/createChannel">
-              {loggedIn ? <CreateChannel/> : <Redirect to="/login"/>}
+              {/*loggedIn ? <CreateChannel/> : <Redirect to="/login"/>*/}
+              <CreateChannel/>
             </Route>
             <Route path="/"> 
               <Redirect to="/login" />

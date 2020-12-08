@@ -1,4 +1,4 @@
-import React, {useContext , useState } from 'react';
+import React, {useState} from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -16,7 +16,6 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'axios';
 import { FormHelperText } from '@material-ui/core';
-import { UserContext } from './Contexts/UserContext';
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
@@ -50,7 +49,6 @@ const useStyles = (theme) => ({
 });
 
 export default () => {
-  const contextUser = useContext(UserContext)
 
   const [wrongPass, setWrongPass] = useState(false);
   const [wrongUser, setWrongUser] = useState(false);
@@ -76,15 +74,14 @@ export default () => {
     event.preventDefault();
   };
 
-  const handleLogIn = async () => {
-    await axios.post('http://localhost:3001/users/login',{
+  const handleLogIn = () => {
+    axios.post('http://localhost:3001/users/login',{
         username: username,
         password: password
     }, {withCredentials: true}).then(function (response){
       setWrongUser(false);
       setWrongPass(false);
       console.log("Redirecting to welcome...")
-      contextUser.setUserContext(username) //Not working for some reason
       window.location.href = '/welcome';
     }).catch(function (error){
       if(error.response.status === 404){
