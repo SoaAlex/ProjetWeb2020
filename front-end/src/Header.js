@@ -75,8 +75,6 @@ export default ({
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-    console.log(contextUser.username)
-    console.log(contextLoggedIn.loggedIn)
     setAnchorEl(event.currentTarget);
   };
 

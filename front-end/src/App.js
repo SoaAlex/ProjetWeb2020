@@ -62,7 +62,8 @@ export default () => {
         console.log("Not logged in")
       }else{
         setLoggedIn(true);
-        setUsername(jwt.verifyToken(getCookie('authorization')).username)
+        let {data: tempUser} = await axios.post('http://localhost:3001/jwt-decode', {}, {withCredentials: true})
+        setUsername(tempUser.username)
         console.log("Logged in. Redirecting...")
       }
     }
@@ -71,7 +72,6 @@ export default () => {
 
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
-    console.log(username)
   }
   const drawerToggleListener = () => {
     setDrawerMobileVisible(!drawerMobileVisible)
@@ -124,7 +124,7 @@ export default () => {
 
           <Switch>
             <Route path="/login">
-              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUsername}/>}
+              {loggedIn ? <Redirect to="/welcome"/> : <Login />}
             </Route>
             <Route path="/register">
               {loggedIn ? <Redirect to="/welcome"/> : <Register/>}
@@ -132,7 +132,7 @@ export default () => {
             <Route path="/welcome">
               {loggedIn ? <Main drawerMobileVisible={drawerMobileVisible} /> : <Redirect to="/login"/>}
             </Route>
-            <Route path="/createChannel">
+            <Route path="/create-Channel">
               {/*loggedIn ? <CreateChannel/> : <Redirect to="/login"/>*/}
               <CreateChannel/>
             </Route>

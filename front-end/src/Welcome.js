@@ -30,7 +30,7 @@ export default () => {
   const styles = useStyles(useTheme())
 
   const handleCreateChannel = () => {
-    window.location.href = '/createChannel'
+    window.location.href = '/create-channel'
   }
 
   return (

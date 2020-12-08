@@ -8,7 +8,6 @@ module.exports ={
     generateUserToken: function(user){
         return jwt.sign({
             userId: user.username,
-            isAdmin: user.isAdmin
         },
         TOKEN_SECRET,
         {
@@ -18,7 +17,6 @@ module.exports ={
     generateUserRefreshToken: function(user){
         return jwt.sign({
             userId: user.username,
-            isAdmin: user.isAdmin
         },
         REFRESH_TOKEN_SECRET,
         {
@@ -26,9 +24,12 @@ module.exports ={
         })
     },
     verifyToken: function(authorization_token){
-        const decodedToken = jwt.verify(authorization_token, TOKEN_SECRET)
-        const userId = decodedToken.userId
-        const isAdmin = decodedToken.isAdmin
-        return {username: userId, isAdmin: isAdmin}
+        try{
+            const decodedToken = jwt.verify(authorization_token, TOKEN_SECRET)
+            const userId = decodedToken.userId
+            return {username: userId}
+        } catch(err){
+            return null
+        }
     }
 }

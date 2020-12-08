@@ -21,8 +21,9 @@ module.exports = {
       const channel = JSON.parse(data)
       return merge(channel, {id: id})
     },
-    list: async () => {
+    list: async (username) => {
       return new Promise( (resolve, reject) => {
+        let userFound = false;
         const channels = []
         db.createReadStream({
           gt: "channels:",
@@ -30,7 +31,15 @@ module.exports = {
         }).on( 'data', ({key, value}) => {
           channel = JSON.parse(value)
           channel.id = key.split(':')[1]
-          channels.push(channel)
+          //Check if user belongs to channel. If yes, add this channel to list
+          channel.users.forEach(user => {
+            if(user === username){
+              userFound = true
+            }
+          })
+          if(userFound){
+            channels.push(channel)
+          }
         }).on( 'error', (err) => {
           reject(err)
         }).on( 'end', () => {
@@ -39,9 +48,8 @@ module.exports = {
       })
     },
     update: (id, channel) => {
-      const original = store.channels[id]
-      if(!original) throw Error('Unregistered channel id')
-      store.channels[id] = merge(original, channel)
+      updatedChannel = await db.put(`channels:${id}`, JSON.stringify(channel))
+      return merge(updatedChannel, {id: id})
     },
     delete: (id, channel) => {
       const original = store.channels[id]
