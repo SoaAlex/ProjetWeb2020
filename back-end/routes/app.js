@@ -96,4 +96,9 @@ app.put('/users/:id', async (req, res) => {
   res.json(user)
 })
 
+app.post('/admin/clear', async (req, res) =>{
+  await db.admin.clear()
+  res.sendStatus(200)
+})
+
 module.exports = app

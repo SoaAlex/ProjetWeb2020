@@ -9,6 +9,7 @@ import Header from './Header'
 import Main from './Main'
 import Login from './Login'
 import Register from './Register'
+import CreateChannel from './CreateChannel'
 import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
 import { LoggedInContext } from './Contexts/LoggedInContext';
@@ -68,6 +69,7 @@ export default () => {
 
   const darkModeToggleListener = () => {
     setDarkMode(!darkMode)
+    console.log(username)
   }
   const drawerToggleListener = () => {
     setDrawerMobileVisible(!drawerMobileVisible)
@@ -120,13 +122,16 @@ export default () => {
 
           <Switch>
             <Route path="/login">
-              {loggedIn ? <Redirect to="/welcome"/> : <Login onUser={setUsername}/>}
+              {loggedIn ? <Redirect to="/welcome"/> : <Login/>}
             </Route>
             <Route path="/register">
               {loggedIn ? <Redirect to="/welcome"/> : <Register/>}
             </Route>
             <Route path="/welcome">
               {loggedIn ? <Main drawerMobileVisible={drawerMobileVisible} /> : <Redirect to="/login"/>}
+            </Route>
+            <Route path="/createChannel">
+              {loggedIn ? <CreateChannel/> : <Redirect to="/login"/>}
             </Route>
             <Route path="/"> 
               <Redirect to="/login" />

@@ -75,9 +75,9 @@ export default ({
     }, {withCredentials: true}).then(function (response){
       console.log(response)
       console.log("Redirecting to login...")
-      onUser(username)
       window.location.href = '/login';
     }).catch(function (error){
+      console.log(error)
       if(error.response.status === 409){
         console.log("User already exists...")
         setUserAlreadyExist(true);

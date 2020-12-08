@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import {ReactComponent as ChannelIcon} from './icons/channel.svg';
 import {ReactComponent as FriendsIcon} from './icons/friends.svg';
 import {ReactComponent as SettingsIcon} from './icons/settings.svg';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = (theme) => ({
   root: {
@@ -20,13 +21,18 @@ const useStyles = (theme) => ({
     textAlign: 'center',
   },
   icon: {
-    width: '30%',
+    width: '100%',
     fill: theme.palette.primary.main,
   }
 })
 
 export default () => {
   const styles = useStyles(useTheme())
+
+  const handleCreateChannel = () => {
+    window.location.href = '/createChannel'
+  }
+
   return (
     <div css={styles.root}>
       <Grid
@@ -38,10 +44,13 @@ export default () => {
       >
         <Grid item xs>
           <div css={styles.card}>
-            <ChannelIcon style={styles.icon} />
+            <IconButton onClick={handleCreateChannel}>
+              <ChannelIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
               Create channels
             </Typography>
+            
           </div>
         </Grid>
         <Grid item xs>

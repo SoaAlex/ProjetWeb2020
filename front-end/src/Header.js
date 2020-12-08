@@ -76,6 +76,7 @@ export default ({
 
   const handleClick = (event) => {
     console.log(contextUser.username)
+    console.log(contextLoggedIn.loggedIn)
     setAnchorEl(event.currentTarget);
   };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext , useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -49,9 +49,7 @@ const useStyles = (theme) => ({
   }
 });
 
-export default ({
-  onUser
-}) => {
+export default () => {
   const contextUser = useContext(UserContext)
 
   const [wrongPass, setWrongPass] = useState(false);
@@ -78,8 +76,8 @@ export default ({
     event.preventDefault();
   };
 
-  const handleLogIn = () => {
-    axios.post('http://localhost:3001/users/login',{
+  const handleLogIn = async () => {
+    await axios.post('http://localhost:3001/users/login',{
         username: username,
         password: password
     }, {withCredentials: true}).then(function (response){
@@ -87,8 +85,6 @@ export default ({
       setWrongPass(false);
       console.log("Redirecting to welcome...")
       contextUser.setUserContext(username) //Not working for some reason
-      //console.log(contextUser.username)
-      onUser(username)
       window.location.href = '/welcome';
     }).catch(function (error){
       if(error.response.status === 404){
