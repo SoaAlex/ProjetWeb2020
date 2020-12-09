@@ -17,7 +17,6 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { getCookie } from './utils/cookies';
-import jwt from './utils/jwt.utils'
 import {
   BrowserRouter as Router,
   Switch,

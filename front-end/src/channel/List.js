@@ -1,4 +1,4 @@
-import {forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState} from 'react'
+import {forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, useContext, useEffect} from 'react'
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -14,8 +14,12 @@ import html from 'rehype-stringify'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { Typography } from '@material-ui/core';
 import ChannelSettings from '../ChannelSettings';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { UserContext } from '../Contexts/UserContext';
+import axios from 'axios';
+import MessageEditDialog from './MessageEditDialog'
 //import Suppr from '../message-action/Suppr'
 //import Editer from '../message-action/Editer'
 dayjs.extend(calendar)
@@ -68,6 +72,11 @@ const useStyles = (theme) => ({
   },
   settings:{
     marginRight: '30%',
+  },
+  icons:{
+    marginLeft: "5px",
+    //position: "relative",
+    //top: "5px",
   }
 })
 
@@ -75,6 +84,7 @@ export default forwardRef(({
   channel,
   messages,
   onScrollDown,
+  refreshMessages
 }, ref) => {
   const styles = useStyles(useTheme())
   // Expose the `scroll` action
@@ -104,7 +114,10 @@ export default forwardRef(({
     return () => rootNode.removeEventListener('scroll', handleScroll)
   })
 
+  const [openEdit, setOpenEdit] = useState(false);
   const [open, setOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState("")
+  const [selectedMsgId, setSelectedMsgId] = useState("")
 
   const handleOpenSettings = () =>{
     setOpen(true);
@@ -113,6 +126,28 @@ export default forwardRef(({
   const handleClose = () => {
     setOpen(false);
   }
+
+  const contexUser = useContext(UserContext)
+
+  const handleEdit = async (e) => {
+    const id = e.currentTarget.value
+    const {data: fetchedMessage} = await axios.get(`http://localhost:3001/channels/${channel.id}/message/${id}`)
+    setSelectedMsgId(id)
+    setSelectedMessage(JSON.parse(fetchedMessage))
+    setOpenEdit(true);
+  }
+
+  const handleDelete = (e) => {
+    axios.delete(`http://localhost:3001/channels/${channel.id}/messages/${e.currentTarget.value}`, {}, {withCredentials: true}).then(function (response){
+      refreshMessages()
+    }).catch(function (error){
+      alert("An unattended error occured. One more bug.")
+    })
+  }
+
+  useEffect(() => {
+
+  }, [selectedMessage])
 
   return (
     <div css={styles.root} ref={rootEl}>
@@ -136,6 +171,18 @@ export default forwardRef(({
                   <span css={styles.white}>{message.author}</span>
                   {' - '}
                   <span css={styles.white}>{dayjs().calendar(message.creation)}</span>
+                    {contexUser.username === message.author ? 
+                    <span>
+                      <IconButton value={message.creation} onClick={handleDelete} css={styles.icons}>
+                        <DeleteIcon color="primary"/>
+                      </IconButton>
+                    </span> : ""} 
+                    {contexUser.username === message.author ? 
+                    <span>
+                      <IconButton value={message.creation} onClick={handleEdit} css={styles.icons}>
+                        <EditIcon color="primary"/>
+                      </IconButton>
+                    </span> : ""} 
                 </p>
                 {/*<div><span><Suppr 
                 nMessage={message} 
@@ -148,6 +195,15 @@ export default forwardRef(({
             )
         })}
       </ul>
+      <MessageEditDialog 
+        open={openEdit} 
+        setOpen={setOpenEdit} 
+        refreshMessages={refreshMessages}
+        channelId = {channel.id}
+        message = {selectedMessage}
+        setNewMessage = {setSelectedMessage}
+        creation = {selectedMsgId}
+      />
       <div ref={scrollEl} />
     </div>
   )

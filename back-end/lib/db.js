@@ -47,14 +47,12 @@ module.exports = {
         })
       })
     },
-    update: (id, channel) => {
-      updatedChannel = await db.put(`channels:${id}`, JSON.stringify(channel))
+    update: async (id, channel) => {
+      const updatedChannel = await db.put(`channels:${id}`, JSON.stringify(channel))
       return merge(updatedChannel, {id: id})
     },
     delete: (id, channel) => {
-      const original = store.channels[id]
-      if(!original) throw Error('Unregistered channel id')
-      delete store.channels[id]
+      db.del(`channels:${id}`)
     }
   },
   messages: {
@@ -66,7 +64,7 @@ module.exports = {
       await db.put(`messages:${channelId}:${creation}`, JSON.stringify({
         author: message.author,
         content: message.content,
-        id: uuid()
+        //id: uuid()
       }))
       return merge(message, {channelId: channelId, creation: creation})
     },
@@ -89,6 +87,33 @@ module.exports = {
         })
       })
     },
+    put: async (channelId, creation, message) => {
+      try{
+        await db.put(`messages:${channelId}:${creation}`,JSON.stringify({
+          author: message.author,
+          content: message.content,
+        }))
+        return 1
+      }catch(err){
+        return 0
+      }
+    },
+    delete: async (channelId, creation) => {
+      try{
+        await db.del(`messages:${channelId}:${creation}`)
+        return 1
+      }catch(err){
+        return 0
+      }
+    },
+    get: async (channelId, creation) => {
+      try{
+         const msg = await db.get(`messages:${channelId}:${creation}`)
+         return msg
+      }catch(err){
+        return 0
+      }
+    }
   },
   users: {
     register: async (user) => {

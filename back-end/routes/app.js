@@ -60,6 +60,16 @@ app.put('/channels/:id', async (req, res) => {
   }
 })
 
+app.delete('/channels/:id', async (req, res) => {
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    const channel = await db.channels.update(req.params.id, req.body)
+    res.status(200).json(channel)
+  }
+  else{
+    res.sendStatus(401)
+  }
+})
+
 // Messages
 
 app.get('/channels/:id/messages', async (req, res) => {
@@ -70,6 +80,49 @@ app.get('/channels/:id/messages', async (req, res) => {
 app.post('/channels/:id/messages', async (req, res) => {
   const message = await db.messages.create(req.params.id, req.body)
   res.status(201).json(message)
+})
+
+app.put('/channels/:idChannel/messages/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    if(await db.messages.put(req.params.idChannel, req.params.idMessage, req.body) == 1){
+      res.sendStatus(200)
+    }
+    else{
+      res.sendStatus(500)
+    }
+  }
+  else{
+    res.json(401)
+  }
+})
+
+app.get('/channels/:idChannel/message/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    const msg = await db.messages.get(req.params.idChannel, req.params.idMessage)
+    if(msg != 0){
+      res.status(200).json(msg)
+    }
+    else{
+      res.sendStatus(500)
+    }
+  }
+  else{
+    res.sendStatus(401)
+  }
+})
+
+app.delete('/channels/:idChannel/messages/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    if(await db.messages.delete(req.params.idChannel, req.params.idMessage) == 1){
+      res.sendStatus(200)
+    }
+    else{
+      res.sendStatus(500)
+    }
+  }
+  else{
+    res.sendStatus(401)
+  }
 })
 
 // Users
