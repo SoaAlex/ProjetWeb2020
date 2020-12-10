@@ -32,6 +32,12 @@ export default () => {
   const handleCreateChannel = () => {
     window.location.href = '/create-channel'
   }
+  const handleInviteFriends = () => {
+    alert('Please invite friends directly from the channel manage users button')
+  }
+  const handleSettings = () => {
+    window.location.href = '/account'
+  }
 
   return (
     <div css={styles.root}>
@@ -50,22 +56,25 @@ export default () => {
             <Typography color="textPrimary">
               Create channels
             </Typography>
-            
           </div>
         </Grid>
         <Grid item xs>
           <div css={styles.card}>
-            <FriendsIcon style={styles.icon} />
+            <IconButton onClick={handleInviteFriends}>
+              <FriendsIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
-              Invite friends
+              Invite Friends
             </Typography>
           </div>
         </Grid>
         <Grid item xs>
           <div css={styles.card}>
-            <SettingsIcon style={styles.icon} />
+            <IconButton onClick={handleSettings}>
+              <SettingsIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
-              Settings
+              Account settings
             </Typography>
           </div>
         </Grid>

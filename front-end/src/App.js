@@ -10,6 +10,8 @@ import Main from './Main'
 import Login from './Login'
 import Register from './Register'
 import CreateChannel from './CreateChannel'
+import Account from './Account'
+import AccountView from './AccountView'
 import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
 import { LoggedInContext } from './Contexts/LoggedInContext';
@@ -44,7 +46,6 @@ axios.interceptors.request.use(req => {
   return req;
 });
 
-
 export default () => {
   //VARIABLES & HOOKS
   const styles = useStyles();
@@ -53,6 +54,7 @@ export default () => {
   const [drawerMobileVisible, setDrawerMobileVisible] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false);
+  const [avatar, setAvatar] = useState('')
 
   useEffect( () => {
     const checkLoggedIn = async () => {
@@ -63,6 +65,7 @@ export default () => {
         setLoggedIn(true);
         let {data: tempUser} = await axios.post('http://localhost:3001/jwt-decode', {}, {withCredentials: true})
         setUsername(tempUser.username)
+        setAvatar(tempUser.avatar)
         console.log("Logged in. Redirecting...")
       }
     }
@@ -87,7 +90,9 @@ export default () => {
   }
   const contextUser = {
     username: username,
-    setUserContext: setUsername
+    avatar: avatar,
+    setUserContext: setUsername,
+    setUserAvatar: setAvatar
   }
 
   //PALETTE
@@ -134,6 +139,13 @@ export default () => {
             <Route path="/create-Channel">
               {/*loggedIn ? <CreateChannel/> : <Redirect to="/login"/>*/}
               <CreateChannel/>
+            </Route>
+            <Route path="/account">
+              {/*loggedIn ? <Account />: <Redirect to="/login"/>*/}
+              <Account user={username}/>
+            </Route>
+            <Route path="/account-view">
+              <AccountView />
             </Route>
             <Route path="/"> 
               <Redirect to="/login" />

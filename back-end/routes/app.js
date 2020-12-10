@@ -165,11 +165,22 @@ app.get('/users/:id', async (req, res) => {
   }
 })
 
-app.put('/users/:id', async (req, res) => {
-  const user = await db.users.update(req.body)
-  res.json(user)
+app.put('/users', async (req, res) => {
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    status = await db.users.update(req.body)
+    if(status.status){
+      res.sendStatus(500)
+    }
+    else{
+      res.sendStatus(201)
+    }
+  }
+  else{
+    res.sendStatus(401)
+  }
 })
 
+//Utils
 app.post('/admin/clear', async (req, res) =>{
   await db.admin.clear()
   res.sendStatus(200)

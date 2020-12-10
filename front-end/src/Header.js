@@ -14,13 +14,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
-import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { eraseCookie } from './utils/cookies';
 import { LoggedInContext } from './Contexts/LoggedInContext';
 import { UserContext } from './Contexts/UserContext';
+import Avatar from '@material-ui/core/Avatar';
 import {ReactComponent as ECEIcon} from './icons/LogoECE.svg';
 
 const useStyles = makeStyles((theme) => ({
@@ -138,7 +138,8 @@ export default ({
             color="secondary"
             className={styles.accountButton}
             onClick={handleClick}
-            endIcon={<AccountCircleRoundedIcon></AccountCircleRoundedIcon>}
+            endIcon={<Avatar src={contextUser.avatar} />}
+
           >
             { contextUser.username }
           </Button> : ""

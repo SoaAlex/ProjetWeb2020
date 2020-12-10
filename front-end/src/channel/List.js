@@ -14,7 +14,7 @@ import html from 'rehype-stringify'
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import ChannelSettings from '../ChannelSettings';
+import ChannelSettings from './ChannelSettings';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { UserContext } from '../Contexts/UserContext';
@@ -178,7 +178,7 @@ export default forwardRef(({
           onClick={handleOpenSettings}
           endIcon={<SettingsIcon />}
         >
-          Channel settings
+          Manage users
         </Button>
         <ChannelSettings channel={channel} open={open} onClose={handleClose}/>
         <h1 css={styles.h1}>Messages for {channel.name}</h1>

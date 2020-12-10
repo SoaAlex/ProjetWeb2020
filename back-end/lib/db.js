@@ -185,10 +185,14 @@ module.exports = {
         })
       })
     },
-    update: (id, user) => {
-      const original = store.users[id]
-      if(!original) throw Error('Unregistered user id')
-      store.users[id] = merge(original, user)
+    update: async (user) => {
+      //Hash passoword
+      const hash = await bcrypt.hash(user.password, 5)
+      user.password = hash
+
+      //Update DB with new user's values
+      await db.put(`users:${user.username}`, JSON.stringify(user))
+      return user
     },
     delete: (id, user) => {
       const original = store.users[id]

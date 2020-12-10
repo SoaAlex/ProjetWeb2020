@@ -21,7 +21,7 @@ export default () => {
   return (
     <footer className={styles.footer}>
       <Typography variant='subtitle1' className={styles.typography} component='div'>
-        ECE Copyright 2020-2021 © | Alexandre SOARES | <a href="https://www.ece.fr">Contact us</a>
+        ECE Copyright 2020-2021 © | Alexandre SOARES - Paul CAUDAL | <a href="https://www.ece.fr">Contact us</a>
       </Typography>
     </footer>
   );

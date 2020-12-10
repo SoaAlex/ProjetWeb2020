@@ -8,6 +8,7 @@ module.exports ={
     generateUserToken: function(user){
         return jwt.sign({
             userId: user.username,
+            avatar: user.avatar,
         },
         TOKEN_SECRET,
         {
@@ -27,7 +28,8 @@ module.exports ={
         try{
             const decodedToken = jwt.verify(authorization_token, TOKEN_SECRET)
             const userId = decodedToken.userId
-            return {username: userId}
+            const avatar = decodedToken.avatar
+            return {username: userId, avatar: avatar}
         } catch(err){
             return null
         }
