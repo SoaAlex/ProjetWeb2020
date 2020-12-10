@@ -20,6 +20,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { UserContext } from '../Contexts/UserContext';
 import axios from 'axios';
 import MessageEditDialog from './MessageEditDialog'
+import Button from '@material-ui/core/Button';
+import '../index.css'
 //import Suppr from '../message-action/Suppr'
 //import Editer from '../message-action/Editer'
 dayjs.extend(calendar)
@@ -72,11 +74,27 @@ const useStyles = (theme) => ({
   },
   settings:{
     marginRight: '30%',
+    height: '40px',
+    position: 'relative',
+    top: '20px',
+    marginLeft: '15px'
   },
   icons:{
-    marginLeft: "5px",
-    //position: "relative",
-    //top: "5px",
+    marginLeft: '0px',
+    padding: '5px',
+    position: "relative",
+    top: "-2px",
+  },
+  selfMessage:{
+    textAlign: 'end',
+    padding: '.2rem .5rem',
+    ':hover': {
+      //backgroundColor: 'rgba(255,255,255,.05)',
+    },
+  },
+  author:{
+    fontWeight: 'bold',
+    color: theme.palette.text.primary
   }
 })
 
@@ -127,7 +145,7 @@ export default forwardRef(({
     setOpen(false);
   }
 
-  const contexUser = useContext(UserContext)
+  const contextUser = useContext(UserContext)
 
   const handleEdit = async (e) => {
     const id = e.currentTarget.value
@@ -152,10 +170,17 @@ export default forwardRef(({
   return (
     <div css={styles.root} ref={rootEl}>
       <div css={styles.header}>
-        <IconButton css={styles.settings} onClick={handleOpenSettings}>
-          <SettingsIcon/>
-          <ChannelSettings channel={channel} open={open} onClose={handleClose}/>
-        </IconButton>
+
+        <Button
+          variant="contained"
+          color="primary"
+          css={styles.settings}
+          onClick={handleOpenSettings}
+          endIcon={<SettingsIcon />}
+        >
+          Channel settings
+        </Button>
+        <ChannelSettings channel={channel} open={open} onClose={handleClose}/>
         <h1 css={styles.h1}>Messages for {channel.name}</h1>
       </div>
       <ul>
@@ -166,30 +191,25 @@ export default forwardRef(({
             .use(html)
             .processSync(message.content)
             return (
-              <li key={i} css={styles.message}>
+              <li key={i} css={message.author === contextUser.username ? styles.selfMessage: styles.message}>
                 <p>
-                  <span css={styles.white}>{message.author}</span>
+                  {contextUser.username === message.author ? 
+                  <span>
+                    <IconButton value={message.creation} onClick={handleDelete} css={styles.icons}>
+                      <DeleteIcon color="primary"/>
+                    </IconButton>
+                  </span> : ""} 
+                  {contextUser.username === message.author ? 
+                  <span>
+                    <IconButton value={message.creation} onClick={handleEdit} css={styles.icons}>
+                      <EditIcon color="primary"/>
+                    </IconButton>
+                  </span> : ""} 
+                  <span css={styles.author}>{message.author}</span>
                   {' - '}
                   <span css={styles.white}>{dayjs().calendar(message.creation)}</span>
-                    {contexUser.username === message.author ? 
-                    <span>
-                      <IconButton value={message.creation} onClick={handleDelete} css={styles.icons}>
-                        <DeleteIcon color="primary"/>
-                      </IconButton>
-                    </span> : ""} 
-                    {contexUser.username === message.author ? 
-                    <span>
-                      <IconButton value={message.creation} onClick={handleEdit} css={styles.icons}>
-                        <EditIcon color="primary"/>
-                      </IconButton>
-                    </span> : ""} 
                 </p>
-                {/*<div><span><Suppr 
-                nMessage={message} 
-                /> </span><span><Editer
-                OnMessage={message} 
-                /></span></div>*/}
-                <div css={styles.white} dangerouslySetInnerHTML={{__html: content}}>
+                <div css={styles.white} /*className="speech-bubble"*/ dangerouslySetInnerHTML={{__html: content}}>
                 </div>
               </li>
             )
