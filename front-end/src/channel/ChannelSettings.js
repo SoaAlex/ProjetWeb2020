@@ -34,8 +34,7 @@ export default ({channel, onClose, open}) => {
       setChannelRefreshed(channelCopy)
     }
     fetch()
-    // eslint-disable-next-line
-  }, [])
+  }, [channel])
 
   const refreshChannel = async () => {
     const {data: channelCopy} = await axios.get(`http://localhost:3001/channels/${channel.id}`)
