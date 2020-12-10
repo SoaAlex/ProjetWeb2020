@@ -6,6 +6,7 @@ import { jsx } from '@emotion/core'
 import Link from '@material-ui/core/Link'
 import { makeStyles } from '@material-ui/core/styles';
 import { ChannelsContext } from './Contexts/ChannelsContext';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,6 +16,14 @@ const useStyles = makeStyles((theme) => ({
     padding: '.2rem .5rem',
     whiteSpace: 'nowrap', 
   },
+  text:{
+    color: "#ffffff"
+  },
+  button:{
+    position: "relative",
+    top: "2px",
+    marginLeft: "2%"
+  }
 }));
 
 export default ({
@@ -38,15 +47,19 @@ export default ({
       <ul className={styles.root}>
         { contextChannels.channels.map( (channel, i) => (
           <li key={i} className={styles.channel}>
-            <Link
-              href="#"
-              onClick={ (e) => {
-                e.preventDefault()
-                onChannel(channel)
-              }}
-              >
-              {channel.name}
-            </Link>
+            <Button variant="contained" color="primary" css={{marginLeft:"2%", marginTop:"2%", width: "95%"}}>
+              <Link
+                className={styles.text}
+                href="#"
+                onClick={ (e) => {
+                  e.preventDefault()
+                  onChannel(channel)
+                }}
+                >
+                {channel.name}
+                
+              </Link>
+            </Button>
           </li>
         ))}
       </ul>

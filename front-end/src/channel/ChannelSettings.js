@@ -101,7 +101,7 @@ export default ({channel, onClose, open}) => {
             </Avatar>
           </ListItemAvatar>
           <form className={classes.root} noValidate autoComplete="off">
-            <TextField value={addedUser} label="Add user to channel" onChange={handleAddSet} />
+            <TextField value={addedUser} label="Add user to channel" placeholder="Press '+' to add" onChange={handleAddSet} />
             </form>
         </ListItem>
       </List>

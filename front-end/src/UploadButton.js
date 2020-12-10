@@ -32,7 +32,7 @@ export default () => {
           type="file"
         />
         <label htmlFor="contained-button-file">
-          <Button variant="contained" color="primary" component="span" className={styles.button}>
+          <Button variant="contained" color="primary" component="span" className={styles.button} disabled /* disabled while feature not implemented */>
             Upload
           </Button>
         </label>

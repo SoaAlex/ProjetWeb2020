@@ -180,6 +180,16 @@ app.put('/users', async (req, res) => {
   }
 })
 
+app.get('/users/:id/avatar', async (req, res) => {
+    avatar = await db.users.getAvatar(req.params.id)
+    if(avatar !== null){
+      res.status(200).json(avatar)
+    }
+    else{
+      res.sendStatus(500)
+    }
+})
+
 //Utils
 app.post('/admin/clear', async (req, res) =>{
   await db.admin.clear()

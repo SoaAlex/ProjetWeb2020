@@ -6,10 +6,10 @@ import { useTheme } from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
 // Markdown
-import unified from 'unified'
+/*import unified from 'unified'
 import markdown from 'remark-parse'
 import remark2rehype from 'remark-rehype'
-import html from 'rehype-stringify'
+import html from 'rehype-stringify'*/
 // Time
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
@@ -22,6 +22,7 @@ import axios from 'axios';
 import MessageEditDialog from './MessageEditDialog'
 import Button from '@material-ui/core/Button';
 import '../index.css'
+import { Avatar } from '@material-ui/core';
 //import Suppr from '../message-action/Suppr'
 //import Editer from '../message-action/Editer'
 dayjs.extend(calendar)
@@ -92,9 +93,25 @@ const useStyles = (theme) => ({
       //backgroundColor: 'rgba(255,255,255,.05)',
     },
   },
+  right:{
+    float: "right"
+  },
+  left:{
+    float:"left"
+  },
   author:{
     fontWeight: 'bold',
     color: theme.palette.text.primary
+  },
+  p:{
+    marginBottom: "10px",
+    marginTop: "20px",
+  },
+  text:{
+    position: "relative",
+    top: "9px",
+    marginRight: "10px",
+    marginLeft: "10px",
   }
 })
 
@@ -136,8 +153,10 @@ export default forwardRef(({
   const [open, setOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState("")
   const [selectedMsgId, setSelectedMsgId] = useState("")
+  const [avatarUsers, setAvatarUsers] = useState(new Map())
 
   const handleOpenSettings = () =>{
+    console.log(avatarUsers)
     setOpen(true);
   }
 
@@ -164,8 +183,23 @@ export default forwardRef(({
   }
 
   useEffect(() => {
+    var tmpMap = new Map()
+    const fetch = async () => {
+      for(var user in channel.users){
+        const {data: tmpAvatar} = await axios.get(`http://localhost:3001/users/${channel.users[user]}/avatar`, {}, {withCredentials: true})
+        tmpMap.set(channel.users[user], tmpAvatar)
+      }
+    }
+    fetch()
+    setAvatarUsers(tmpMap)
+    console.log(tmpMap)
+  }, [channel.users])
 
-  }, [selectedMessage])
+  const getAvatars = () => {
+    setAvatarUsers(avatarUsers)
+  }
+
+  window.onload = getAvatars
 
   return (
     <div css={styles.root} ref={rootEl}>
@@ -185,14 +219,14 @@ export default forwardRef(({
       </div>
       <ul>
         { messages.map( (message, i) => {
-            const {contents: content} = unified()
+            /*const {contents: content} = unified()
             .use(markdown)
             .use(remark2rehype)
             .use(html)
-            .processSync(message.content)
+            .processSync(message.content)*/
             return (
               <li key={i} css={message.author === contextUser.username ? styles.selfMessage: styles.message}>
-                <p>
+                <p css={styles.p}>
                   {contextUser.username === message.author ? 
                   <span>
                     <IconButton value={message.creation} onClick={handleDelete} css={styles.icons}>
@@ -209,8 +243,10 @@ export default forwardRef(({
                   {' - '}
                   <span css={styles.white}>{dayjs().calendar(message.creation)}</span>
                 </p>
-                <div css={styles.white} /*className="speech-bubble"*/ dangerouslySetInnerHTML={{__html: content}}>
-                </div>
+                  <div css={styles.white}>
+                  <Avatar css={message.author === contextUser.username ? styles.right: styles.left} src={avatarUsers.get(message.author)}/>
+                  <span css={styles.text}>{message.content}</span>
+                  </div>
               </li>
             )
         })}

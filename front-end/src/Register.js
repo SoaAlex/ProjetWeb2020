@@ -51,7 +51,7 @@ const useStyles = (theme) => ({
   },
   radio:{
     color: theme.palette.text.primary,
-    marginRight: '38%',
+    marginRight: '50%',
   },
   ece: {
     width: 'auto',

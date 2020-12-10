@@ -39,6 +39,7 @@ module.exports = {
           })
           if(userFound){
             channels.push(channel)
+            userFound = false
           }
         }).on( 'error', (err) => {
           reject(err)
@@ -198,6 +199,16 @@ module.exports = {
       const original = store.users[id]
       if(!original) throw Error('Unregistered user id')
       delete store.users[id]
+    },
+    getAvatar: async (id) => {
+      try{
+        const data = await db.get(`users:${id}`)
+        const user = JSON.parse(data)
+        return user.avatar
+      }catch(err){
+        return null
+      }
+
     }
   },
   admin: {

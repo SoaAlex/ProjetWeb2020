@@ -28,6 +28,7 @@ import UploadButton from './UploadButton'
 import axios from 'axios';
 import { eraseCookie } from './utils/cookies';
 
+var gravatar = require('gravatar');
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
@@ -59,7 +60,7 @@ const useStyles = (theme) => ({
   },
   radio:{
     color: theme.palette.text.primary,
-    marginRight: '38%',
+    marginRight: '50%',
   },
   avatar: {
     width: '100px',
@@ -136,7 +137,7 @@ export default ({usernameDur}) => {
       password: password,
       gender: gender,
       language: language,
-      avatar: avatar,
+      avatar: convertAvatar(),
     }, {withCredentials: true}).then(function (response){
       alert("Successfully updated database. You now have to reconnect...")
       eraseCookie("authorization")
@@ -144,6 +145,18 @@ export default ({usernameDur}) => {
     }).catch(function (error){
         alert('An error occured.')
     })
+  }
+
+  const convertAvatar = () => {
+    if(avatar === "gravatar"){
+      return gravatar.url(email)
+    }
+    else if(avatar === "uploaded"){
+      return "./avatars/avatar1.png" //Default 1 for the moment
+    }
+    else{
+      return avatar
+    }
   }
 
   return (
