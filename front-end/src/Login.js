@@ -1,5 +1,4 @@
-import {} from 'react';
-import React from 'react';
+import React, {useState} from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
@@ -15,8 +14,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import axios from 'axios';
+import { FormHelperText } from '@material-ui/core';
 
-/** HIGHLY INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
+/** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 
 const useStyles = (theme) => ({
   root: {
@@ -39,17 +40,22 @@ const useStyles = (theme) => ({
   center:{
     width: 'auto',
   },
-  h2:{
-    color: theme.palette.primary,
-  },
-  main:{
-    background: theme.palette.background,
+
+  register:{
+    marginTop: '10px',
+    textAlign: 'center',
+    marginBottom: '-15px',
   }
 });
 
-export default ({
-  onUser
-}) => {
+export default () => {
+
+  const [wrongPass, setWrongPass] = useState(false);
+  const [wrongUser, setWrongUser] = useState(false);
+  const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
+
+
   const [values, setValues] = React.useState({
     password: '',
     showPassword: false,
@@ -57,6 +63,7 @@ export default ({
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
+    setPassword(event.target.value);
   };
 
   const handleClickShowPassword = () => {
@@ -66,6 +73,33 @@ export default ({
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const handleLogIn = () => {
+    axios.post('http://localhost:3001/users/login',{
+        username: username,
+        password: password
+    }, {withCredentials: true}).then(function (response){
+      setWrongUser(false);
+      setWrongPass(false);
+      console.log("Redirecting to welcome...")
+      window.location.href = '/welcome';
+    }).catch(function (error){
+      if(error.response.status === 404){
+        console.log("Wrong username...")
+        setWrongPass(false);
+        setWrongUser(true);
+      }
+      else if(error.response.status === 401){
+        console.log("Wrong password...")
+        setWrongPass(true);
+        setWrongUser(false);
+      }
+    })
+  }
+
+  const handleRegister = () => {
+    window.location.href = '/register';
+  }
 
   const styles = useStyles(useTheme());
 
@@ -83,12 +117,15 @@ export default ({
 
       <Grid>
         <TextField
+          error= {wrongUser}
           variant="outlined"
-          id="Username"
+          id="username"
           label="Username"
-          name="Username"
+          name="username"
           autoFocus
           fullWidth
+          onChange={(e) => setUsername(e.target.value)}
+          helperText={wrongUser ? "Incorrect Username" : ""}
         />
       </Grid>
 
@@ -96,6 +133,7 @@ export default ({
         <FormControl css = {styles.password} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password" >Password</InputLabel>
           <OutlinedInput
+            error={wrongPass}
             id="outlined-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
@@ -115,6 +153,7 @@ export default ({
             }
             labelWidth={70}
           />
+          {wrongPass ? <FormHelperText id="component-error-text" error>Incorrect password</FormHelperText> : ""}
         </FormControl>
       </Grid>
         
@@ -125,14 +164,30 @@ export default ({
           variant="contained"
           color="primary"
           fullWidth
-          onClick={ (e) => {
-            e.stopPropagation()
-            onUser({username: 'david'})
-          }}
+          onClick={handleLogIn}
         >
           Log in
         </Button>
       </Grid>
+
+      <Grid>
+        <Typography variant='h6' color='primary' css={styles.register}>
+          Do not have an account yet ?
+        </Typography>
+      </Grid>
+
+      <Grid>
+        <Button
+          margin = 'normal'
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={handleRegister}
+        >
+          Sign in
+        </Button>
+      </Grid>
+
     </div>
   );
 }

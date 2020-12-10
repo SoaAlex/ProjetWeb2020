@@ -1,5 +1,5 @@
 
-@import-normalize;
+/*@import-normalize;*/
 
 /* Unused*/
 .App {
@@ -14,4 +14,25 @@ ul {
   padding: 0;
   text-indent: 0;
   list-style-type: none;
+}
+
+.speech-bubble {
+	position: relative;
+	background: #0277bd;
+	border-radius: .4em;
+}
+
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 38px solid transparent;
+	border-left-color: #0277bd;
+	border-right: 0;
+	border-top: 0;
+	margin-top: -19px;
+	margin-right: -38px;
 }

@@ -1,17 +1,30 @@
-import {forwardRef, useImperativeHandle, useLayoutEffect, useRef} from 'react'
+import {forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, useContext, useEffect} from 'react'
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Layout
 import { useTheme } from '@material-ui/core/styles';
+import SettingsIcon from '@material-ui/icons/Settings';
+import IconButton from '@material-ui/core/IconButton';
 // Markdown
-import unified from 'unified'
+/*import unified from 'unified'
 import markdown from 'remark-parse'
 import remark2rehype from 'remark-rehype'
-import html from 'rehype-stringify'
+import html from 'rehype-stringify'*/
 // Time
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import ChannelSettings from './ChannelSettings';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { UserContext } from '../Contexts/UserContext';
+import axios from 'axios';
+import MessageEditDialog from './MessageEditDialog'
+import Button from '@material-ui/core/Button';
+import '../index.css'
+import { Avatar } from '@material-ui/core';
+//import Suppr from '../message-action/Suppr'
+//import Editer from '../message-action/Editer'
 dayjs.extend(calendar)
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
@@ -55,6 +68,50 @@ const useStyles = (theme) => ({
   h1:{
     color: theme.palette.primary.main,
     textAlign: 'center',
+  },
+  header:{
+    display: 'inline-flex',
+    width: '100%'
+  },
+  settings:{
+    marginRight: '30%',
+    height: '40px',
+    position: 'relative',
+    top: '20px',
+    marginLeft: '15px'
+  },
+  icons:{
+    marginLeft: '0px',
+    padding: '5px',
+    position: "relative",
+    top: "-2px",
+  },
+  selfMessage:{
+    textAlign: 'end',
+    padding: '.2rem .5rem',
+    ':hover': {
+      //backgroundColor: 'rgba(255,255,255,.05)',
+    },
+  },
+  right:{
+    float: "right"
+  },
+  left:{
+    float:"left"
+  },
+  author:{
+    fontWeight: 'bold',
+    color: theme.palette.text.primary
+  },
+  p:{
+    marginBottom: "10px",
+    marginTop: "20px",
+  },
+  text:{
+    position: "relative",
+    top: "9px",
+    marginRight: "10px",
+    marginLeft: "10px",
   }
 })
 
@@ -62,6 +119,7 @@ export default forwardRef(({
   channel,
   messages,
   onScrollDown,
+  refreshMessages
 }, ref) => {
   const styles = useStyles(useTheme())
   // Expose the `scroll` action
@@ -90,29 +148,118 @@ export default forwardRef(({
     rootNode.addEventListener('scroll', handleScroll)
     return () => rootNode.removeEventListener('scroll', handleScroll)
   })
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState("")
+  const [selectedMsgId, setSelectedMsgId] = useState("")
+  const [avatarUsers, setAvatarUsers] = useState(new Map())
+
+  const handleOpenSettings = () =>{
+    console.log(avatarUsers)
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
+  const contextUser = useContext(UserContext)
+
+  const handleEdit = async (e) => {
+    const id = e.currentTarget.value
+    const {data: fetchedMessage} = await axios.get(`http://localhost:3001/channels/${channel.id}/message/${id}`)
+    setSelectedMsgId(id)
+    setSelectedMessage(JSON.parse(fetchedMessage))
+    setOpenEdit(true);
+  }
+
+  const handleDelete = (e) => {
+    axios.delete(`http://localhost:3001/channels/${channel.id}/messages/${e.currentTarget.value}`, {}, {withCredentials: true}).then(function (response){
+      refreshMessages()
+    }).catch(function (error){
+      alert("An unattended error occured. One more bug.")
+    })
+  }
+
+  useEffect(() => {
+    var tmpMap = new Map()
+    const fetch = async () => {
+      for(var user in channel.users){
+        const {data: tmpAvatar} = await axios.get(`http://localhost:3001/users/${channel.users[user]}/avatar`, {}, {withCredentials: true})
+        tmpMap.set(channel.users[user], tmpAvatar)
+      }
+    }
+    fetch()
+    setAvatarUsers(tmpMap)
+    console.log(tmpMap)
+  }, [channel.users])
+
+  const getAvatars = () => {
+    setAvatarUsers(avatarUsers)
+  }
+
+  window.onload = getAvatars
+
   return (
     <div css={styles.root} ref={rootEl}>
-      <h1 css={styles.h1}>Messages for {channel.name}</h1>
+      <div css={styles.header}>
+
+        <Button
+          variant="contained"
+          color="primary"
+          css={styles.settings}
+          onClick={handleOpenSettings}
+          endIcon={<SettingsIcon />}
+        >
+          Manage users
+        </Button>
+        <ChannelSettings channel={channel} open={open} onClose={handleClose}/>
+        <h1 css={styles.h1}>Messages for {channel.name}</h1>
+      </div>
       <ul>
         { messages.map( (message, i) => {
-            const {contents: content} = unified()
+            /*const {contents: content} = unified()
             .use(markdown)
             .use(remark2rehype)
             .use(html)
-            .processSync(message.content)
+            .processSync(message.content)*/
             return (
-              <li key={i} css={styles.message}>
-                <p>
-                  <span css={styles.white}>{message.author}</span>
+              <li key={i} css={message.author === contextUser.username ? styles.selfMessage: styles.message}>
+                <p css={styles.p}>
+                  {contextUser.username === message.author ? 
+                  <span>
+                    <IconButton value={message.creation} onClick={handleDelete} css={styles.icons}>
+                      <DeleteIcon color="primary"/>
+                    </IconButton>
+                  </span> : ""} 
+                  {contextUser.username === message.author ? 
+                  <span>
+                    <IconButton value={message.creation} onClick={handleEdit} css={styles.icons}>
+                      <EditIcon color="primary"/>
+                    </IconButton>
+                  </span> : ""} 
+                  <span css={styles.author}>{message.author}</span>
                   {' - '}
                   <span css={styles.white}>{dayjs().calendar(message.creation)}</span>
                 </p>
-                <div css={styles.white} dangerouslySetInnerHTML={{__html: content}}>
-                </div>
+                  <div css={styles.white}>
+                  <Avatar css={message.author === contextUser.username ? styles.right: styles.left} src={avatarUsers.get(message.author)}/>
+                  <span css={styles.text}>{message.content}</span>
+                  </div>
               </li>
             )
         })}
       </ul>
+      <MessageEditDialog 
+        open={openEdit} 
+        setOpen={setOpenEdit} 
+        refreshMessages={refreshMessages}
+        channelId = {channel.id}
+        message = {selectedMessage}
+        setNewMessage = {setSelectedMessage}
+        creation = {selectedMsgId}
+      />
       <div ref={scrollEl} />
     </div>
   )

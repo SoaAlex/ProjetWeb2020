@@ -1,7 +1,7 @@
 
 const supertest = require('supertest')
 const microtime = require('microtime')
-const app = require('../lib/app')
+const app = require('../routes/app')
 const db = require('../lib/db')
 
 describe('messages', () => {

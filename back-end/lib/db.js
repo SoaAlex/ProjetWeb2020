@@ -4,6 +4,8 @@ const {clone, merge} = require('mixme')
 const microtime = require('microtime')
 const level = require('level')
 const db = level(__dirname + '/../db')
+const bcrypt = require('bcrypt')
+const jwt = require('../utils/jwt.utils')
 
 module.exports = {
   channels: {
@@ -19,8 +21,9 @@ module.exports = {
       const channel = JSON.parse(data)
       return merge(channel, {id: id})
     },
-    list: async () => {
+    list: async (username) => {
       return new Promise( (resolve, reject) => {
+        let userFound = false;
         const channels = []
         db.createReadStream({
           gt: "channels:",
@@ -28,7 +31,16 @@ module.exports = {
         }).on( 'data', ({key, value}) => {
           channel = JSON.parse(value)
           channel.id = key.split(':')[1]
-          channels.push(channel)
+          //Check if user belongs to channel. If yes, add this channel to list
+          channel.users.forEach(user => {
+            if(user === username){
+              userFound = true
+            }
+          })
+          if(userFound){
+            channels.push(channel)
+            userFound = false
+          }
         }).on( 'error', (err) => {
           reject(err)
         }).on( 'end', () => {
@@ -36,15 +48,12 @@ module.exports = {
         })
       })
     },
-    update: (id, channel) => {
-      const original = store.channels[id]
-      if(!original) throw Error('Unregistered channel id')
-      store.channels[id] = merge(original, channel)
+    update: async (id, channel) => {
+      const updatedChannel = await db.put(`channels:${id}`, JSON.stringify(channel))
+      return merge(updatedChannel, {id: id})
     },
     delete: (id, channel) => {
-      const original = store.channels[id]
-      if(!original) throw Error('Unregistered channel id')
-      delete store.channels[id]
+      db.del(`channels:${id}`)
     }
   },
   messages: {
@@ -55,7 +64,8 @@ module.exports = {
       creation = microtime.now()
       await db.put(`messages:${channelId}:${creation}`, JSON.stringify({
         author: message.author,
-        content: message.content
+        content: message.content,
+        //id: uuid()
       }))
       return merge(message, {channelId: channelId, creation: creation})
     },
@@ -78,13 +88,80 @@ module.exports = {
         })
       })
     },
+    put: async (channelId, creation, message) => {
+      try{
+        await db.put(`messages:${channelId}:${creation}`,JSON.stringify({
+          author: message.author,
+          content: message.content,
+        }))
+        return 1
+      }catch(err){
+        return 0
+      }
+    },
+    delete: async (channelId, creation) => {
+      try{
+        await db.del(`messages:${channelId}:${creation}`)
+        return 1
+      }catch(err){
+        return 0
+      }
+    },
+    get: async (channelId, creation) => {
+      try{
+         const msg = await db.get(`messages:${channelId}:${creation}`)
+         return msg
+      }catch(err){
+        return 0
+      }
+    }
   },
   users: {
-    create: async (user) => {
-      if(!user.username) throw Error('Invalid user')
-      const id = uuid()
-      await db.put(`users:${id}`, JSON.stringify(user))
-      return merge(user, {id: id})
+    register: async (user) => {
+      //Verify user doesn't already exists
+      let userNotFound = false;
+      try{
+        await db.get(`users:${user.username}`);
+      }catch(err){//If not found
+        userNotFound = true
+      }
+
+      if(userNotFound){
+        //Hash passoword
+        const hash = await bcrypt.hash(user.password, 5)
+        user.password = hash
+
+        //Insert in DB
+        await db.put(`users:${user.username}`, JSON.stringify(user))
+        return user
+      }
+      else{
+        return {status: 409} //User already exists
+      }
+    },
+    login: async (user) => {
+      let userFound = null
+      try{
+        userFound = await db.get(`users:${user.username}`)
+        userFound = JSON.parse(userFound)
+      }catch(err){
+        return {status: 404} //Invalid username
+      }
+      if(userFound){
+        //Check if password matches hash
+        const match = await bcrypt.compare(user.password, userFound.password);
+        if(match){
+          return {
+            username: userFound.username, 
+            status: 200,
+            token: jwt.generateUserToken(userFound),
+            //refreshToken: jwt.generateUserRefreshToken(userFound)
+          }
+        }
+        else{
+          return {status: 401} //Invalid password
+        }
+      }
     },
     get: async (id) => {
       if(!id) throw Error('Invalid id')
@@ -109,15 +186,29 @@ module.exports = {
         })
       })
     },
-    update: (id, user) => {
-      const original = store.users[id]
-      if(!original) throw Error('Unregistered user id')
-      store.users[id] = merge(original, user)
+    update: async (user) => {
+      //Hash passoword
+      const hash = await bcrypt.hash(user.password, 5)
+      user.password = hash
+
+      //Update DB with new user's values
+      await db.put(`users:${user.username}`, JSON.stringify(user))
+      return user
     },
     delete: (id, user) => {
       const original = store.users[id]
       if(!original) throw Error('Unregistered user id')
       delete store.users[id]
+    },
+    getAvatar: async (id) => {
+      try{
+        const data = await db.get(`users:${id}`)
+        const user = JSON.parse(data)
+        return user.avatar
+      }catch(err){
+        return null
+      }
+
     }
   },
   admin: {

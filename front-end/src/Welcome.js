@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import {ReactComponent as ChannelIcon} from './icons/channel.svg';
 import {ReactComponent as FriendsIcon} from './icons/friends.svg';
 import {ReactComponent as SettingsIcon} from './icons/settings.svg';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = (theme) => ({
   root: {
@@ -20,13 +21,24 @@ const useStyles = (theme) => ({
     textAlign: 'center',
   },
   icon: {
-    width: '30%',
+    width: '100%',
     fill: theme.palette.primary.main,
   }
 })
 
 export default () => {
   const styles = useStyles(useTheme())
+
+  const handleCreateChannel = () => {
+    window.location.href = '/create-channel'
+  }
+  const handleInviteFriends = () => {
+    alert('Please invite friends directly from the channel manage users button')
+  }
+  const handleSettings = () => {
+    window.location.href = '/account'
+  }
+
   return (
     <div css={styles.root}>
       <Grid
@@ -38,7 +50,9 @@ export default () => {
       >
         <Grid item xs>
           <div css={styles.card}>
-            <ChannelIcon style={styles.icon} />
+            <IconButton onClick={handleCreateChannel}>
+              <ChannelIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
               Create channels
             </Typography>
@@ -46,17 +60,21 @@ export default () => {
         </Grid>
         <Grid item xs>
           <div css={styles.card}>
-            <FriendsIcon style={styles.icon} />
+            <IconButton onClick={handleInviteFriends}>
+              <FriendsIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
-              Invite friends
+              Invite Friends
             </Typography>
           </div>
         </Grid>
         <Grid item xs>
           <div css={styles.card}>
-            <SettingsIcon style={styles.icon} />
+            <IconButton onClick={handleSettings}>
+              <SettingsIcon style={styles.icon} />
+            </IconButton>
             <Typography color="textPrimary">
-              Settings
+              Account settings
             </Typography>
           </div>
         </Grid>

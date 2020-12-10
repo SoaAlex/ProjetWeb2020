@@ -66,6 +66,7 @@ export default ({
         messages={messages}
         onScrollDown={onScrollDown}
         ref={listRef}
+        refreshMessages={addMessage}
       />
       <Form addMessage={addMessage} channel={channel} />
       <Fab

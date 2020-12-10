@@ -1,6 +1,6 @@
 
 const supertest = require('supertest')
-const app = require('../lib/app')
+const app = require('../routes/app')
 const db = require('../lib/db')
 
 describe('channels', () => {

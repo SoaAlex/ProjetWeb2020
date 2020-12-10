@@ -1,6 +1,6 @@
 #!env node
 
-const app = require('../lib/app')
+const app = require('../routes/app')
 const config = {
   port: 3001
 }
