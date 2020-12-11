@@ -59,7 +59,7 @@ L'API comprends les 4 méthodes GET, POST, PUT, DELETE pour
 - ```/users```
 - ```/channels```
 - ```/messages```
-Ainsi qu'un décodeur de JWT Token et un /admin/clear pour reset la BDD (EN ENVIRONNEMENT DE DEVELOPPEMENT UNIQUEMENT)
+- Ainsi qu'un décodeur de JWT Token et un /admin/clear pour reset la BDD (EN ENVIRONNEMENT DE DEVELOPPEMENT UNIQUEMENT)
 
 # Barème
 ## Développement
