@@ -39,7 +39,7 @@ Clé: channelID
 - name
 - users (array contenant les users membres de ce channel)
 
-#### Messages
+### Messages
 Clé: channelID  + creation
 - author
 - content
