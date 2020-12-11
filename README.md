@@ -61,6 +61,18 @@ L'API comprends les 4 méthodes GET, POST, PUT, DELETE pour
 - ```/messages```
 - Ainsi qu'un décodeur de JWT Token et un /admin/clear pour reset la BDD (EN ENVIRONNEMENT DE DEVELOPPEMENT UNIQUEMENT)
 
+## Login
+Une fois un compte créé, il est stocké en BDD dans /users avec ses identifiants (mot de passe crypté avec bcrypt).
+La connexion se fait sur /login. Si les identifiants sont corrects, le serveur retourne un JWT Token contenant les informations utilisateur.
+Le Token est stocké dans un cookie ```authorization```
+
+## JWT Token
+La clé est stocké sur le back-end uniquement, et utilise la librairie jsonwebtoken pour le créé. Le Token décodé contient:
+- ```username```
+- ```URL avatar```
+- ```expireIn```: 24H
+
+
 # Barème
 ## Développement
 | Spécificité                                                                          | Points | Validation |
