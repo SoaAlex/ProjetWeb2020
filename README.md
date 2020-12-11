@@ -8,9 +8,9 @@ Veuillez lire les instructions ci-dessous afin de comprendre le fonctionnement d
 - Paul Caudal
 
 ## Comment éxecuter le projet ?
-- Depuis /front-end: react-script start
-- Depuis /back-end: node bin/start
-- Il est possible que vous ayez besoin de reset la base de données. Pour cela, supprimer simplement tous les fichiers contenus dans /db
+- Depuis /front-end: ```react-script start```
+- Depuis /back-end: ```node bin/start```
+- Il est possible que vous ayez besoin de reset la base de données. Pour cela, supprimer simplement tous les fichiers contenus dans /db (ou méthode DELETE à http://localhost:3001/admin/celar)
 
 ## Identifiants
 Le site requiert un username ainsi qu'un mot de passe pour se connecter. 4 comptes sont déjà pré-configurés:
@@ -45,8 +45,24 @@ Clé: channelID  + creation
 - content
 - channelID
 
-## Barème
-### Développement
+## Front
+Le front est en react à l'adresse: http://localhost:3000.
+Les différentes pages sont:
+- ```/login```
+- ```/register```
+- ```/welcome```
+- ```/account```
+
+## Back
+Le back est en node.js à l'adresse: http://localhost:3001.
+L'API comprends les 4 méthodes GET, POST, PUT, DELETE pour
+- ```/users```
+- ```/channels```
+- ```/messages```
+Ainsi qu'un décodeur de JWT Token et un /admin/clear pour reset la BDD (EN ENVIRONNEMENT DE DEVELOPPEMENT UNIQUEMENT)
+
+# Barème
+## Développement
 | Spécificité                                                                          | Points | Validation |
 |--------------------------------------------------------------------------------------|--------|------------|
 | Formulaire de Sign in, création du compte \(moyen\)                                  | 4      | OUI        |
@@ -62,7 +78,7 @@ Clé: channelID  + creation
 | Sélection d'un avatar \(moyen\)                                                      | 4      | OUI        |
 | Avatar personnel \(dur\)                                                             | 6      | NON        |
 
-### Gestion de projet
+## Gestion de projet
 | Spécificité                                                                                             | Points |
 |---------------------------------------------------------------------------------------------------------|--------|
 | Respect des conventions de nommage                                                                      | 2      |
@@ -70,19 +86,19 @@ Clé: channelID  + creation
 | Qualité globale du code \(indentation, clarté, …\) 4                                                    | 4      |
 | Apparence globale de l'application web 4                                                                | 4      |
 
-### Bonus
+## Bonus
 | Spécificité bonus | Validation |
 |-------------------|------------|
 | DarkMode          | OUI        |
 
-## Bugs connus
-### Critique
+# Bugs connus
+## Critique
 - Il reste encore quelques URLs qui ne requiert pas un token valide pour l'accès aux données. La plupart sont cependant sécurisées.
 - Blindages des PUT dans la BDD.
 
-### Moderé
+## Moderé
 - Les channels n'affichent pas imédiatement les avatars des autres participants que soit même. Le hook contenant les avatars ne se met à jour qu'une fois un message envoyé où après avoir cliqué sur un composant forçant un rerender.
 
-### Faible
+## Faible
 - La page /account (manage account ou account settings) n'affiche pas en placeholder/value l'état actuel des attributs d'un utilisateur bien qu'ils aient correctement été récuperé depuis la BDD. Il s'agit encore d'un problème de hook qui n'est pas à jour au moment du render.
 - Le bouton Edit message n'affiche pas en placeholder/value l'ancien message à cause d'un hook pas à jour au moment du render.
