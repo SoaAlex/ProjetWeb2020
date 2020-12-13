@@ -169,6 +169,7 @@ export default ({usernameDur}) => {
       email: email,
       password: password,
       gender: gender,
+      name: name,
       language: language,
       avatar: convertAvatar(),
       }, {withCredentials: true}).then(function (response){
