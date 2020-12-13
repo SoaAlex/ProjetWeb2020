@@ -1,12 +1,13 @@
-import {useEffect, useContext} from 'react';
-import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import {useEffect, useContext} from 'react';
+import axios from 'axios';
+// MUI
 import Link from '@material-ui/core/Link'
 import { makeStyles } from '@material-ui/core/styles';
-import { ChannelsContext } from './Contexts/ChannelsContext';
 import Button from '@material-ui/core/Button';
+// Context
+import { ChannelsContext } from '../Contexts/ChannelsContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,14 +48,13 @@ export default ({
       <ul className={styles.root}>
         { contextChannels.channels.map( (channel, i) => (
           <li key={i} className={styles.channel}>
-            <Button variant="contained" color="primary" css={{marginLeft:"2%", marginTop:"2%", width: "95%"}}>
+            <Button onClick={ (e) => {
+                  e.preventDefault()
+                  onChannel(channel)
+                }} variant="contained" color="primary" css={{marginLeft:"2%", marginTop:"2%", width: "95%"}}>
               <Link
                 className={styles.text}
                 href="#"
-                onClick={ (e) => {
-                  e.preventDefault()
-                  onChannel(channel)
-                }}
                 >
                 {channel.name}
                 

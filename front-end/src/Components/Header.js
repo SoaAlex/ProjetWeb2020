@@ -1,10 +1,10 @@
-import './App.css';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React from 'react'
 import {useContext} from 'react'
-// HIGHLY INSPIRED FROM MUI DOCS: https://material-ui.com/components/app-bar/
-
+import { eraseCookie } from '../utils/cookies';
+import '../App.css';
+// MUI
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -17,11 +17,14 @@ import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { eraseCookie } from './utils/cookies';
-import { LoggedInContext } from './Contexts/LoggedInContext';
-import { UserContext } from './Contexts/UserContext';
 import Avatar from '@material-ui/core/Avatar';
-import {ReactComponent as ECEIcon} from './icons/LogoECE.svg';
+// Context
+import { LoggedInContext } from '../Contexts/LoggedInContext';
+import { UserContext } from '../Contexts/UserContext';
+// Custom components
+import {ReactComponent as ECEIcon} from '../icons/LogoECE.svg';
+
+// HIGHLY INSPIRED FROM MUI DOCS: https://material-ui.com/components/app-bar/
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,7 +131,6 @@ export default ({
                 />
               }
               className={styles.darkModeSwitch}
-              //label="Dark Mode (BETA)"
             />
             <NightsStayRoundedIcon/>
           </IconButton>

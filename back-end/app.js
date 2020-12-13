@@ -1,13 +1,15 @@
 
-const db = require('../lib/db')
+const db = require('./lib/db')
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const jwt = require('../utils/jwt.utils')
+const jwt = require('./utils/jwt.utils')
 const cookieParser = require('cookie-parser')
+const fileUpload = require('express-fileupload');
 
 app.use(require('body-parser').json())
 app.use(cookieParser())
+app.use(fileUpload());
 
 //Cookies middlewear
 app.use(cors({ origin: true, credentials: true }));
@@ -22,8 +24,12 @@ app.get('/', (req, res) => {
 // Channels
 app.get('/channels', async (req, res) => {
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    const channels = await db.channels.list(jwt.verifyToken(req.headers.authorization).username)
-    res.json(channels)
+    try{
+      const channels = await db.channels.list(jwt.verifyToken(req.headers.authorization).username)
+      res.json(channels)
+    }catch(err){
+      res.status(500).json(err)
+    }
   }
   else{
     res.sendStatus(401)
@@ -32,8 +38,12 @@ app.get('/channels', async (req, res) => {
 
 app.post('/channels', async (req, res) => {
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    const channel = await db.channels.create(req.body)
-    res.status(201).json(channel)
+    try{
+      const channel = await db.channels.create(req.body)
+      res.status(201).json(channel)
+    }catch(err){
+      res.status(500).json(err)
+    }
   }
   else{
     res.sendStatus(401)
@@ -42,8 +52,12 @@ app.post('/channels', async (req, res) => {
 
 app.get('/channels/:id', async (req, res) => {
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    const channel = await db.channels.get(req.params.id)
-    res.json(channel)
+    try{
+      const channel = await db.channels.get(req.params.id)
+      res.json(channel)
+    }catch(err){
+      res.status(500).json(err)
+    }
   }
   else{
     res.sendStatus(401)
@@ -52,14 +66,19 @@ app.get('/channels/:id', async (req, res) => {
 
 app.put('/channels/:id', async (req, res) => {
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    const channel = await db.channels.update(req.params.id, req.body)
-    res.status(200).json(channel)
+    try{
+      const channel = await db.channels.update(req.params.id, req.body)
+      res.status(200).json(channel)
+    }catch(err){
+      res.status(500).json(err)
+    }
   }
   else{
     res.sendStatus(401)
   }
 })
 
+/* UNUSED
 app.delete('/channels/:id', async (req, res) => {
   if(jwt.verifyToken(req.headers.authorization) !== null){
     const channel = await db.channels.update(req.params.id, req.body)
@@ -68,27 +87,46 @@ app.delete('/channels/:id', async (req, res) => {
   else{
     res.sendStatus(401)
   }
-})
+})*/ 
 
 // Messages
 
 app.get('/channels/:id/messages', async (req, res) => {
-  const messages = await db.messages.list(req.params.id)
-  res.json(messages)
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    try{
+      const messages = await db.messages.list(req.params.id)
+      res.status(200).json(messages)
+    }catch(err){
+      res.status(500).json(err)
+    }
+  }
+  else{
+    res.sendStatus(401)
+  }
 })
 
 app.post('/channels/:id/messages', async (req, res) => {
-  const message = await db.messages.create(req.params.id, req.body)
-  res.status(201).json(message)
+  if(jwt.verifyToken(req.headers.authorization) !== null){
+    try{
+      const message = await db.messages.create(req.params.id, req.body)
+      res.status(201).json(message)
+    }catch(err){
+      res.status(500).json(err)
+    }
+  }
+  else{
+    res.sendStatus(401)
+  }
 })
 
 app.put('/channels/:idChannel/messages/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    if(await db.messages.put(req.params.idChannel, req.params.idMessage, req.body) == 1){
+    try{
+      await db.messages.put(req.params.idChannel, req.params.idMessage, req.body)
       res.sendStatus(200)
     }
-    else{
-      res.sendStatus(500)
+    catch(err){
+      res.status(500).json(err)
     }
   }
   else{
@@ -98,12 +136,13 @@ app.put('/channels/:idChannel/messages/:idMessage', async (req, res) => { //keba
 
 app.get('/channels/:idChannel/message/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    const msg = await db.messages.get(req.params.idChannel, req.params.idMessage)
-    if(msg != 0){
+    let msg
+    try{
+      msg = await db.messages.get(req.params.idChannel, req.params.idMessage)
       res.status(200).json(msg)
     }
-    else{
-      res.sendStatus(500)
+    catch(err){
+      res.status(404).json(err)
     }
   }
   else{
@@ -113,11 +152,12 @@ app.get('/channels/:idChannel/message/:idMessage', async (req, res) => { //kebab
 
 app.delete('/channels/:idChannel/messages/:idMessage', async (req, res) => { //kebab case not applicable here due to - not accepted in req.params.id-channel
   if(jwt.verifyToken(req.headers.authorization) !== null){
-    if(await db.messages.delete(req.params.idChannel, req.params.idMessage) == 1){
-      res.sendStatus(200)
-    }
-    else{
-      res.sendStatus(500)
+  try{
+    await db.messages.delete(req.params.idChannel, req.params.idMessage)
+    res.sendStatus(200)
+  }
+    catch(err){
+      res.status(404).json(err)
     }
   }
   else{
@@ -128,8 +168,12 @@ app.delete('/channels/:idChannel/messages/:idMessage', async (req, res) => { //k
 // Users
 
 app.get('/users', async (req, res) => {
-  const users = await db.users.list()
-  res.json(users)
+  try{
+    const users = await db.users.list()
+    res.json(users)
+  }catch(err){
+    res.status(500).json(err)
+  }
 })
 
 app.post('/users/register', async (req, res) => {
@@ -194,6 +238,30 @@ app.get('/users/:id/avatar', async (req, res) => {
 app.post('/admin/clear', async (req, res) =>{
   await db.admin.clear()
   res.sendStatus(200)
+})
+
+app.post('/upload-avatar', async (req, res) =>{
+  if(req.files === undefined){
+    res.status(400).json("Missing file")
+  }else{
+    const file = req.files.file
+    //NB I got into trouble trying to store using absolute path.
+    //I was only able to get it work by storing data into /routes
+    file.mv(`${__dirname}/uploads/${file.name}`, err =>{
+      if(err){
+        res.sendStatus(500)
+      }
+    })
+    res.sendStatus(200)
+  }
+})
+
+app.get('/avatar/:file', async (req, res) =>{
+  if(req.params.file === undefined){
+    res.status(400).json("Missing file name")
+  }else{
+    res.sendFile(`${__dirname}/uploads/${req.params.file}`);
+  }
 })
 
 app.post('/jwt-decode', async (req, res) =>{

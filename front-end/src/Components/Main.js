@@ -1,11 +1,11 @@
-import {useState} from 'react'
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import {useState} from 'react'
+// MUI
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Drawer from '@material-ui/core/Drawer';
-// Local
+// Custom components
 import Channels from './Channels'
 import Channel from './Channel'
 import Welcome from './Welcome'

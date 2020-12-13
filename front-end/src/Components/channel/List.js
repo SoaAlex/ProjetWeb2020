@@ -1,30 +1,26 @@
-import {forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, useContext, useEffect} from 'react'
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import {forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState, useContext, useEffect} from 'react'
+import '../../index.css'
+import axios from 'axios';
+// MUI
 import { useTheme } from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
-// Markdown
-/*import unified from 'unified'
-import markdown from 'remark-parse'
-import remark2rehype from 'remark-rehype'
-import html from 'rehype-stringify'*/
+import { Avatar } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 // Time
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import updateLocale from 'dayjs/plugin/updateLocale'
+// Custom Components
 import ChannelSettings from './ChannelSettings';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { UserContext } from '../Contexts/UserContext';
-import axios from 'axios';
 import MessageEditDialog from './MessageEditDialog'
-import Button from '@material-ui/core/Button';
-import '../index.css'
-import { Avatar } from '@material-ui/core';
-//import Suppr from '../message-action/Suppr'
-//import Editer from '../message-action/Editer'
+// Context
+import { UserContext } from '../../Contexts/UserContext';
+
 dayjs.extend(calendar)
 dayjs.extend(updateLocale)
 dayjs.updateLocale('en', {
@@ -48,7 +44,6 @@ const useStyles = (theme) => ({
   message: {
     padding: '.2rem .5rem',
     ':hover': {
-      //backgroundColor: 'rgba(255,255,255,.05)',
     },
   },
   fabWrapper: {
@@ -90,7 +85,6 @@ const useStyles = (theme) => ({
     textAlign: 'end',
     padding: '.2rem .5rem',
     ':hover': {
-      //backgroundColor: 'rgba(255,255,255,.05)',
     },
   },
   right:{
@@ -156,7 +150,6 @@ export default forwardRef(({
   const [avatarUsers, setAvatarUsers] = useState(new Map())
 
   const handleOpenSettings = () =>{
-    console.log(avatarUsers)
     setOpen(true);
   }
 
@@ -192,7 +185,6 @@ export default forwardRef(({
     }
     fetch()
     setAvatarUsers(tmpMap)
-    console.log(tmpMap)
   }, [channel.users])
 
   const getAvatars = () => {
@@ -219,11 +211,6 @@ export default forwardRef(({
       </div>
       <ul>
         { messages.map( (message, i) => {
-            /*const {contents: content} = unified()
-            .use(markdown)
-            .use(remark2rehype)
-            .use(html)
-            .processSync(message.content)*/
             return (
               <li key={i} css={message.author === contextUser.username ? styles.selfMessage: styles.message}>
                 <p css={styles.p}>

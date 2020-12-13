@@ -10,7 +10,8 @@ const jwt = require('../utils/jwt.utils')
 module.exports = {
   channels: {
     create: async (channel) => {
-      if(!channel.name) throw Error('Invalid channel')
+      if(!channel.name || channel.name === "") throw Error('No name')
+      if(!channel.users || channel.users === "") throw Error('No users specified')
       const id = uuid()
       await db.put(`channels:${id}`, JSON.stringify(channel))
       return merge(channel, {id: id})
@@ -49,6 +50,9 @@ module.exports = {
       })
     },
     update: async (id, channel) => {
+      if(!id || id === "") throw Error('Invalid channel ID')
+      if(!channel.users || channel.users === "") throw Error('Invalid channel users')
+      if(!channel.name || channel.name === "") throw Error('Invalid channel name')
       const updatedChannel = await db.put(`channels:${id}`, JSON.stringify(channel))
       return merge(updatedChannel, {id: id})
     },
@@ -58,9 +62,9 @@ module.exports = {
   },
   messages: {
     create: async (channelId, message) => {
-      if(!channelId) throw Error('Invalid channel')
-      if(!message.author) throw Error('Invalid message')
-      if(!message.content) throw Error('Invalid message')
+      if(!channelId || channelId === "") throw Error('Invalid channel ID')
+      if(!message.author || message.author === "") throw Error('Invalid message author')
+      if(!message.content) throw Error('Invalid message content')
       creation = microtime.now()
       await db.put(`messages:${channelId}:${creation}`, JSON.stringify({
         author: message.author,
@@ -89,31 +93,28 @@ module.exports = {
       })
     },
     put: async (channelId, creation, message) => {
+      if(!channelId || channelId === "") throw Error('Invalid channel ID')
+      if(!message.author || message.author === "") throw Error('Invalid message author')
+      if(!message.content) throw Error('Invalid message content')
       try{
         await db.put(`messages:${channelId}:${creation}`,JSON.stringify({
           author: message.author,
           content: message.content,
         }))
-        return 1
       }catch(err){
-        return 0
+        throw err
       }
     },
     delete: async (channelId, creation) => {
-      try{
-        await db.del(`messages:${channelId}:${creation}`)
-        return 1
-      }catch(err){
-        return 0
-      }
+      if(!channelId || channelId === "") throw Error('Invalid channel ID')
+      if(!creation || creation === "") throw Error('Invalid message ID')
+      await db.del(`messages:${channelId}:${creation}`)
     },
     get: async (channelId, creation) => {
-      try{
-         const msg = await db.get(`messages:${channelId}:${creation}`)
-         return msg
-      }catch(err){
-        return 0
-      }
+      if(!channelId || channelId === "") throw Error('Invalid channel ID')
+      if(!creation || creation === "") throw Error('Invalid message ID')
+      const msg = await db.get(`messages:${channelId}:${creation}`)
+      return msg
     }
   },
   users: {
@@ -123,7 +124,9 @@ module.exports = {
       try{
         await db.get(`users:${user.username}`);
       }catch(err){//If not found
-        userNotFound = true
+        if(err.type === 'NotFoundError'){
+          userNotFound = true
+        }
       }
 
       if(userNotFound){
@@ -167,7 +170,7 @@ module.exports = {
       if(!id) throw Error('Invalid id')
       const data = await db.get(`users:${id}`)
       const user = JSON.parse(data)
-      return merge(user, {id: id})
+      return merge(user)
     },
     list: async () => {
       return new Promise( (resolve, reject) => {

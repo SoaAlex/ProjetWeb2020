@@ -16,7 +16,7 @@ Veuillez lire les instructions ci-dessous afin de comprendre le fonctionnement d
 Le site requiert un username ainsi qu'un mot de passe pour se connecter. 4 comptes sont déjà pré-configurés:
 | Username      | Password      |
 | ------------- |:-------------:|
-| SoaAlex       | 1234          |
+| Alex          | 1234          |
 | Paul          | 1234          |
 | Kévin         | 1234          |
 | David         | 1234          |
@@ -28,22 +28,22 @@ Le projet utilise leveldb, une base de donnes key value.
 
 ### User
 Clé: username (correspond à son ID UNIQUE, on ne peut pas avoir le même username que quelqu'un d'autre)
-- email
-- password (crypté grâce à la librairie bcrypt)
-- avatar (URL)
-- language
-- gender
+- ```email``` (utilisé pour gravatar)
+- ```password``` (crypté grâce à la librairie bcrypt)
+- ```avatar``` (URL vers gravatar, internet, ou vers notre serveur node hébergeant les images uploadés)
+- ```language``` (useless)
+- ```gender``` (useless)
 
 ### Channels
 Clé: channelID
-- name
-- users (array contenant les users membres de ce channel)
+- ```name```
+- ```users``` (array contenant les users membres de ce channel)
 
 ### Messages
 Clé: channelID  + creation
-- author
-- content
-- channelID
+- ```author```
+- ```content```
+- ```channelID```
 
 ## Front
 Le front est en react à l'adresse: http://localhost:3000.
@@ -67,10 +67,10 @@ La connexion se fait sur /login. Si les identifiants sont corrects, le serveur r
 Le Token est stocké dans un cookie ```authorization```
 
 ## JWT Token
-La clé est stocké sur le back-end uniquement, et utilise la librairie jsonwebtoken pour le créé. Le Token décodé contient:
+La clé est stocké sur le back-end uniquement, et utilise la librairie jsonwebtoken pour le créer. Le Token décodé contient:
 - ```username```
 - ```URL avatar```
-- ```expireIn```: 24H
+- ```expireIn```: 24h
 
 
 # Barème
@@ -88,7 +88,7 @@ La clé est stocké sur le back-end uniquement, et utilise la librairie jsonwebt
 | Préférence de compte \(moyen\)                                                       | 4      | OUI        |
 | Affichage du Gravatar \(facile\)                                                     | 2      | OUI        |
 | Sélection d'un avatar \(moyen\)                                                      | 4      | OUI        |
-| Avatar personnel \(dur\)                                                             | 6      | NON        |
+| Avatar personnel \(dur\)                                                             | 6      | OUI        |
 
 ## Gestion de projet
 | Spécificité                                                                                             | Points |
@@ -105,8 +105,7 @@ La clé est stocké sur le back-end uniquement, et utilise la librairie jsonwebt
 
 # Bugs connus
 ## Critique
-- Il reste encore quelques URLs qui ne requiert pas un token valide pour l'accès aux données. La plupart sont cependant sécurisées.
-- Blindages des PUT dans la BDD.
+- Bugs critiques résolus.
 
 ## Moderé
 - Les channels n'affichent pas imédiatement les avatars des autres participants que soit même. Le hook contenant les avatars ne se met à jour qu'une fois un message envoyé où après avoir cliqué sur un composant forçant un rerender.

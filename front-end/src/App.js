@@ -4,14 +4,13 @@ import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 // Local
-import Footer from './Footer'
-import Header from './Header'
-import Main from './Main'
-import Login from './Login'
-import Register from './Register'
-import CreateChannel from './CreateChannel'
-import Account from './Account'
-import AccountView from './AccountView'
+import Footer from './Components/Footer'
+import Header from './Components/Header'
+import Main from './Components/Main'
+import Login from './Components/Login'
+import Register from './Components/Register'
+import CreateChannel from './Components/CreateChannel'
+import Account from './Components/Account'
 import { ChannelsContext } from './Contexts/ChannelsContext'
 import { UserContext } from './Contexts/UserContext';
 import { LoggedInContext } from './Contexts/LoggedInContext';
@@ -38,7 +37,6 @@ const useStyles = makeStyles((theme) => ({  root: {
     width: '100%',
   },
 }));
-
 
 //Add authorization to every headers
 axios.interceptors.request.use(req => {
@@ -143,9 +141,6 @@ export default () => {
             <Route path="/account">
               {/*loggedIn ? <Account />: <Redirect to="/login"/>*/}
               <Account user={username}/>
-            </Route>
-            <Route path="/account-view">
-              <AccountView />
             </Route>
             <Route path="/"> 
               <Redirect to="/login" />

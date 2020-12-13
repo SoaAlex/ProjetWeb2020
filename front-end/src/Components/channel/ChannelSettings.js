@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+// MUI
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
@@ -13,7 +15,6 @@ import AddIcon from '@material-ui/icons/Add';
 import { blue } from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import axios from 'axios';
 
 const useStyles = makeStyles({
   avatar: {
@@ -85,7 +86,7 @@ export default ({channel, onClose, open}) => {
         {channelRefreshed.users.map((user) => (
           <ListItem button onClick={() => handleDelete(user)} key={user}>
             <ListItemAvatar>
-              <Avatar className={classes.avatar}> {/*TODO Add real avatars*/}
+              <Avatar className={classes.avatar}>
                 <PersonIcon />
               </Avatar>
             </ListItemAvatar>

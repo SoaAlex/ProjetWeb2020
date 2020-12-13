@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import React, {useState} from 'react';
+import axios from 'axios';
+// MUI
 import { useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -14,7 +15,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import axios from 'axios';
 import { FormHelperText } from '@material-ui/core';
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
@@ -106,7 +106,7 @@ export default () => {
   return (
     <div css={styles.root} >
       <Grid style={styles.center}>
-        <img src={require("./icons/LogoECE.png")} alt='WhatsECE Logo'></img>
+        <img src={require("../icons/LogoECE.png")} alt='WhatsECE Logo'></img>
       </Grid>
 
       <Grid style={styles.center}>

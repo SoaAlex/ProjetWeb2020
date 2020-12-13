@@ -1,12 +1,12 @@
-import {useRef, useState} from 'react';
-import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import {useRef, useState} from 'react';
+import axios from 'axios';
+// MUI
 import { useTheme } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-// Local
+// Custom components
 import Form from './channel/Form'
 import List from './channel/List'
 
@@ -16,7 +16,6 @@ const useStyles = (theme) => ({
     flex: '1 1 auto',
     display: 'flex',
     flexDirection: 'column',
-    //background: 'rgba(0,0,0,.2)',
     position: 'relative',
   },
   fab: {

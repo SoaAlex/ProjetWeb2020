@@ -1,15 +1,16 @@
-import { useContext, useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import { useContext, useState } from 'react';
+import axios from 'axios';
+// MUI
 import { useTheme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ForumIcon from '@material-ui/icons/Forum';
-import { UserContext } from './Contexts/UserContext'
-import axios from 'axios';
+// Context
+import { UserContext } from '../Contexts/UserContext'
 
 /** INSPIRED FROM MUI DOCS https://material-ui.com/components/text-fields/ */
 

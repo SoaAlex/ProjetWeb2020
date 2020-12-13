@@ -1,14 +1,14 @@
-import { useState, useContext } from 'react'
-import axios from 'axios';
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-// Layout
+import { useState, useContext } from 'react'
+import axios from 'axios';
+// MUI
 import Button from "@material-ui/core/Button"
-// import Icon from "@material-ui/core/Icon"
 import SendIcon from "@material-ui/icons/Send";
 import TextField from '@material-ui/core/TextField';
 import { useTheme } from '@material-ui/core/styles';
-import { UserContext } from '../Contexts/UserContext'
+// Context
+import { UserContext } from '../../Contexts/UserContext'
 
 const useStyles = (theme) => {
   // See https://github.com/mui-org/material-ui/blob/next/packages/material-ui/src/OutlinedInput/OutlinedInput.js
